@@ -1,0 +1,255 @@
+{
+  "loungeInfo": {
+    "name": "The Grid",
+    "subtitle": "Gaming Lounge",
+    "domain": "thegridgaming.fun",
+    "address": {
+      "line1": "Ground Floor, Town Square Shopping Centre",
+      "area": "Thondiyil, Peravoor",
+      "district": "Kannur",
+      "state": "Kerala",
+      "fullAddress": "Ground Floor, Town Square, Thondiyil, Peravoor, Kannur, Kerala"
+    },
+    "timings": {
+      "days": "Monday – Sunday (Open All Days)",
+      "open": "10:00 AM",
+      "close": "10:00 PM",
+      "slotIntervalMins": 15
+    },
+    "contact": {
+      "primaryPhone": "+91 94472 27250",
+      "whatsappNumber": "+91 80759 83910",
+      "whatsappLink": "https://wa.me/918075983910"
+    },
+    "amenities": [
+      "Fully Air-Conditioned Lounge",
+      "7 DualSense Wireless Controllers",
+      "2 Plush Lounge Sofas",
+      "4 Gaming Bean Bags",
+      "Logitech G923 Racing Simulator with TRONE RS1 Aero Cockpit"
+    ]
+  },
+  "screens": [
+    {
+      "id": "screen-1",
+      "code": "Screen1",
+      "name": "Screen 1",
+      "tv": "55\" TCL 4K HDR TV",
+      "console": "PS5 Disc Edition",
+      "simRig": null,
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA6_Launch"],
+      "highlight": "Largest 55\" 4K screen — ideal for 1 to 4 players & couch multiplayer",
+      "games": [
+        "Forza Horizon 5",
+        "Mortal Kombat",
+        "A Way Out",
+        "FC 26",
+        "Far Cry 6",
+        "Astro's Playroom",
+        "eFootball"
+      ]
+    },
+    {
+      "id": "screen-2",
+      "code": "Screen2",
+      "name": "Screen 2",
+      "tv": "43\" TCL 4K UHD TV",
+      "console": "PS5 Disc Edition",
+      "simRig": null,
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA6_Launch"],
+      "highlight": "Loaded with story blockbusters, GTA V, WWE 2K24 & Gran Turismo 7",
+      "games": [
+        "Grand Theft Auto V",
+        "WWE 2K24",
+        "FC 27 Lite",
+        "God of War: Ragnarök",
+        "The Last of Us Part I",
+        "Cricket 24",
+        "Gran Turismo 7"
+      ]
+    },
+    {
+      "id": "screen-3",
+      "code": "Screen3",
+      "name": "Screen 3",
+      "tv": "43\" TCL 4K UHD TV",
+      "console": "PS5 Slim",
+      "simRig": {
+        "available": true,
+        "wheel": "Logitech G923 Racing Wheel & Pedals",
+        "cockpit": "TRONE RS1 Aero Black Racing Simulator Gaming Chair with Adjustable Cockpit",
+        "note": "Can be booked for SimDrive racing OR standard controller gaming"
+      },
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "SimDrive", "GTA6_Launch"],
+      "highlight": "Dual-purpose station: PS5 Slim controller gaming + Logitech G923 Racing Cockpit",
+      "games": [
+        "Grand Theft Auto V",
+        "Marvel's Spider-Man 2",
+        "Forza Horizon 5",
+        "Ghost of Tsushima",
+        "WWE 2K24",
+        "Mortal Kombat",
+        "FC 26",
+        "Astro's Playroom"
+      ]
+    }
+  ],
+  "gamesCatalog": [
+    {
+      "id": "gta-v",
+      "title": "Grand Theft Auto V",
+      "genre": "Open World / Action",
+      "availableOn": ["Screen2", "Screen3"],
+      "recommendedModes": ["Single", "Dual"]
+    },
+    {
+      "id": "fc-26",
+      "title": "FC 26",
+      "genre": "Football / Sports",
+      "availableOn": ["Screen1", "Screen3"],
+      "recommendedModes": ["Dual", "Triple", "Big"]
+    },
+    {
+      "id": "fc-27-lite",
+      "title": "FC 27 Lite",
+      "genre": "Football / Sports",
+      "availableOn": ["Screen2"],
+      "recommendedModes": ["Dual", "Triple", "Big"]
+    },
+    {
+      "id": "forza-horizon-5",
+      "title": "Forza Horizon 5",
+      "genre": "Open World Racing",
+      "availableOn": ["Screen1", "Screen3"],
+      "recommendedModes": ["Single", "SimDrive"]
+    },
+    {
+      "id": "gran-turismo-7",
+      "title": "Gran Turismo 7",
+      "genre": "Pro Sim Racing",
+      "availableOn": ["Screen2"],
+      "recommendedModes": ["Single", "Dual"]
+    },
+    {
+      "id": "wwe-2k24",
+      "title": "WWE 2K24",
+      "genre": "Fighting / Party",
+      "availableOn": ["Screen2", "Screen3"],
+      "recommendedModes": ["Dual", "Triple", "Big"]
+    },
+    {
+      "id": "mortal-kombat",
+      "title": "Mortal Kombat",
+      "genre": "1v1 Fighting",
+      "availableOn": ["Screen1", "Screen3"],
+      "recommendedModes": ["Single", "Dual"]
+    },
+    {
+      "id": "spider-man-2",
+      "title": "Marvel's Spider-Man 2",
+      "genre": "Action / Adventure",
+      "availableOn": ["Screen3"],
+      "recommendedModes": ["Single"]
+    },
+    {
+      "id": "god-of-war-ragnarok",
+      "title": "God of War: Ragnarök",
+      "genre": "Action / Story",
+      "availableOn": ["Screen2"],
+      "recommendedModes": ["Single"]
+    },
+    {
+      "id": "ghost-of-tsushima",
+      "title": "Ghost of Tsushima",
+      "genre": "Open World / Samurai",
+      "availableOn": ["Screen3"],
+      "recommendedModes": ["Single"]
+    },
+    {
+      "id": "last-of-us-part-1",
+      "title": "The Last of Us Part I",
+      "genre": "Story / Survival",
+      "availableOn": ["Screen2"],
+      "recommendedModes": ["Single"]
+    },
+    {
+      "id": "a-way-out",
+      "title": "A Way Out",
+      "genre": "Split-Screen Co-Op",
+      "availableOn": ["Screen1"],
+      "recommendedModes": ["Dual"]
+    },
+    {
+      "id": "far-cry-6",
+      "title": "Far Cry 6",
+      "genre": "First-Person Action",
+      "availableOn": ["Screen1"],
+      "recommendedModes": ["Single"]
+    },
+    {
+      "id": "cricket-24",
+      "title": "Cricket 24",
+      "genre": "Sports / Multiplayer",
+      "availableOn": ["Screen2"],
+      "recommendedModes": ["Dual", "Big"]
+    },
+    {
+      "id": "efootball",
+      "title": "eFootball",
+      "genre": "Football / Sports",
+      "availableOn": ["Screen1"],
+      "recommendedModes": ["Dual", "Big"]
+    },
+    {
+      "id": "astros-playroom",
+      "title": "Astro's Playroom",
+      "genre": "Platformer",
+      "availableOn": ["Screen1", "Screen3"],
+      "recommendedModes": ["Single"]
+    }
+  ],
+  "pricingMatrix": {
+    "Single": {
+      "label": "Single",
+      "players": 1,
+      "description": "1 Player (Solo Controller Session)",
+      "sessions": { "15": 50, "30": 90, "60": 160 },
+      "extensions": { "15": 50, "30": 80, "60": 130 }
+    },
+    "Dual": {
+      "label": "Dual",
+      "players": 2,
+      "description": "2 Players (Co-Op / 1v1 Multiplayer)",
+      "sessions": { "15": 80, "30": 140, "60": 250 },
+      "extensions": { "15": 80, "30": 120, "60": 190 }
+    },
+    "Triple": {
+      "label": 3,
+      "players": 3,
+      "description": "3 Players (Trio Multiplayer)",
+      "sessions": { "15": 100, "30": 180, "60": 310 },
+      "extensions": { "15": 100, "30": 160, "60": 270 }
+    },
+    "Big": {
+      "label": "Big",
+      "players": 4,
+      "description": "4 Players (Full Squad Multiplayer)",
+      "sessions": { "15": 120, "30": 220, "60": 380 },
+      "extensions": { "15": 120, "30": 200, "60": 340 }
+    },
+    "SimDrive": {
+      "label": "SimDrive",
+      "players": 1,
+      "description": "Logitech G923 Racing Wheel + TRONE RS1 Aero Cockpit",
+      "sessions": { "15": 90, "30": 170, "60": 290 },
+      "extensions": { "15": 80, "30": 150, "60": 260 }
+    },
+    "GTA6_Launch": {
+      "label": "GTA 6 — Launch Special",
+      "players": 1,
+      "description": "First 7 Days Launch Exclusive (No 15-min slots)",
+      "sessions": { "30": 150, "60": 250 },
+      "extensions": { "30": 130, "60": 230 }
+    }
+  }
+}
