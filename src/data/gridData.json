@@ -40,13 +40,15 @@
       "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA6_Launch"],
       "highlight": "Largest 55\" 4K screen — ideal for 1 to 4 players & couch multiplayer",
       "games": [
+        "Grand Theft Auto V",
+        "GTA VI",
+        "Marvel's Spider-Man 2",
         "Forza Horizon 5",
+        "Ghost of Tsushima",
+        "WWE 2K24",
         "Mortal Kombat",
-        "A Way Out",
         "FC 26",
-        "Far Cry 6",
-        "Astro's Playroom",
-        "eFootball"
+        "Astro's Playroom"
       ]
     },
     {
@@ -83,14 +85,13 @@
       "supportedModes": ["Single", "Dual", "Triple", "Big", "SimDrive", "GTA6_Launch"],
       "highlight": "Dual-purpose station: PS5 Slim controller gaming + Logitech G923 Racing Cockpit",
       "games": [
-        "Grand Theft Auto V",
-        "Marvel's Spider-Man 2",
         "Forza Horizon 5",
-        "Ghost of Tsushima",
-        "WWE 2K24",
         "Mortal Kombat",
+        "A Way Out",
         "FC 26",
-        "Astro's Playroom"
+        "Far Cry 6",
+        "Astro's Playroom",
+        "eFootball"
       ]
     }
   ],

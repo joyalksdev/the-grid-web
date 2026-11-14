@@ -210,16 +210,29 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                   className="w-52 border-white/10 bg-obsidian text-white"
                 >
                   <DropdownMenuLabel className="text-xs text-white/60">
-                    Signed in · {user.phone}
+                    <span className="block font-semibold text-white">
+                      {user.name || 'Grid Player'}
+                    </span>
+                    <span className="text-[11px] text-white/50">
+                      {user.phone}
+                    </span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-white/10" />
+                  <DropdownMenuItem
+                    onClick={() => navigate('/profile')}
+                    className="cursor-pointer text-xs focus:bg-white/10 focus:text-white"
+                  >
+                    <User size={14} className="mr-2 text-neon" />
+                    Profile &amp; My Passes
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => navigate('/book')}
                     className="cursor-pointer text-xs focus:bg-white/10 focus:text-white"
                   >
-                    <QrCode size={14} className="mr-2 text-neon" />
-                    My Bookings
+                    <QrCode size={14} className="mr-2 text-cyber" />
+                    Book a Screen
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem
                     onClick={onLogout}
                     className="cursor-pointer text-xs text-vice focus:bg-vice/10 focus:text-vice"
@@ -418,12 +431,16 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                       variant="outline"
                       onClick={() => {
                         setMobileOpen(false);
-                        onLoginClick?.();
+                        if (user) {
+                          navigate('/profile');
+                        } else {
+                          onLoginClick?.();
+                        }
                       }}
                       className="h-11 rounded-xl border-white/15 bg-white/[0.03] text-xs font-bold text-white hover:bg-white/10"
                     >
-                      <User size={15} className="mr-1.5 text-white/70" />
-                      {user ? user.phone.slice(-4) : 'Sign In'}
+                      <User size={15} className="mr-1.5 text-neon" />
+                      {user ? 'My Profile' : 'Sign In'}
                     </Button>
 
                     <Button

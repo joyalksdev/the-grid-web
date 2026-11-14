@@ -95,7 +95,7 @@ export default function GridHero() {
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
             <Badge
               variant="outline"
-              className="gap-2 rounded-full border-white/15 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80"
+              className="gap-2 rounded-full border-white/15 bg-white/[0.03] px-3.5 py-4 text-xs font-medium text-white/80"
             >
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon/70" />
