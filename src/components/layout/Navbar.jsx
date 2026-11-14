@@ -141,10 +141,10 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
       <div className="border-b border-white/[0.08] bg-obsidian/85 backdrop-blur-xl">
         <nav className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3.5 sm:px-6 lg:px-8">
           {/* LEFT: Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group justify-start shrink-0">
             <img
               src="/grid-logo.png"
-              className="w-auto h-7 sm:h-9 object-contain transition-transform duration-200 group-hover:scale-105"
+              className="w-auto h-7 sm:h-8 object-contain transition-transform duration-200 mb-1 group-hover:scale-105"
               alt="The Grid Logo"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
