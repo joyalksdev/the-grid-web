@@ -21,7 +21,7 @@ import { useSwipeToast } from '@/components/SwipeToast';
 import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
 
-const MAPS_DIRECTIONS_URL = 'https://maps.app.goo.gl/DSsmy7R6HzVAPjkG9';
+const MAPS_DIRECTIONS_URL = 'https://maps.app.goo.gl/abn9mNczw6RCNAcN7';
 
 function formatModeLabel(modeKey) {
   if (modeKey === 'GTA6_Launch') return '1 Player · GTA 6 Launch';
