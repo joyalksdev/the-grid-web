@@ -2,6 +2,32 @@
 import API from './api';
 
 export const authService = {
+  // Dynamic Email Auth (Nodemailer)
+  checkEmail: async (email) => {
+    const response = await API.post('/public/auth/check-email', { email });
+    return response.data;
+  },
+
+  sendEmailOtp: async ({ email, phone, name }) => {
+    const response = await API.post('/public/auth/send-email-otp', {
+      email,
+      phone,
+      name,
+    });
+    return response.data;
+  },
+
+  verifyEmailOtp: async ({ email, otp, phone, name }) => {
+    const response = await API.post('/public/auth/verify-email-otp', {
+      email,
+      otp,
+      phone,
+      name,
+    });
+    return response.data;
+  },
+
+  // Fast2SMS WhatsApp OTP (Legacy / Alternative)
   sendOtp: async ({ phone, name }) => {
     const response = await API.post('/public/auth/send-otp', { phone, name });
     return response.data;

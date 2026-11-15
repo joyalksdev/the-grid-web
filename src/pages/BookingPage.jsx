@@ -23,6 +23,7 @@ import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
 import { openCashfreeCheckout } from '@/services/cashfree';
 import { socket } from '@/services/socket';
+import { isBookingEnabled } from '@/utils/bookingConfig';
 
 const { screens, pricingMatrix: defaultPricingMatrix, loungeInfo } = gridData;
 
@@ -195,6 +196,7 @@ export default function BookingPage({ user, onRequireLogin }) {
   const queryGame = searchParams.get('game') || '';
 
   const [liveMatrix, setLiveMatrix] = useState(defaultPricingMatrix);
+  const [bookingActive, setBookingActive] = useState(() => isBookingEnabled());
   const [charges, setCharges] = useState({
     convenienceFee: 15,
     gstPercent: 18,
@@ -251,6 +253,9 @@ export default function BookingPage({ user, onRequireLogin }) {
         if (!active) return;
         if (Array.isArray(data?.games)) {
           setDbGames(data.games);
+        }
+        if (data?.bookingEnabled !== undefined) {
+          setBookingActive(Boolean(data.bookingEnabled) && isBookingEnabled());
         }
         if (data?.charges) {
           setCharges({
@@ -1281,11 +1286,20 @@ export default function BookingPage({ user, onRequireLogin }) {
                   </div>
 
                   <Button
-                    onClick={handleConfirmBooking}
-                    disabled={isProcessing || !selectedSlot}
-                    className="h-12 w-full cursor-pointer rounded-xl bg-white text-sm font-bold text-obsidian transition-colors hover:bg-white/90 disabled:opacity-50"
+                    onClick={bookingActive ? handleConfirmBooking : undefined}
+                    disabled={bookingActive ? isProcessing || !selectedSlot : false}
+                    className={`h-12 w-full rounded-xl text-sm font-bold transition-all ${
+                      !bookingActive
+                        ? 'border border-amber-500/30 bg-amber-500/15 text-amber-300 hover:bg-amber-500/20 cursor-default'
+                        : 'cursor-pointer bg-white text-obsidian hover:bg-white/90 disabled:opacity-50'
+                    }`}
                   >
-                    {isProcessing ? (
+                    {!bookingActive ? (
+                      <>
+                        <Clock size={16} className="mr-2 text-amber-400" />
+                        Online Booking Coming Soon
+                      </>
+                    ) : isProcessing ? (
                       <>
                         <RefreshCw size={16} className="mr-2 animate-spin" />
                         Opening Payment...
@@ -1301,6 +1315,11 @@ export default function BookingPage({ user, onRequireLogin }) {
                       </>
                     )}
                   </Button>
+                  {!bookingActive && (
+                    <p className="text-center text-[11px] text-white/50">
+                      Walk-ins &amp; offline counter bookings are currently active at the lounge!
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -1326,11 +1345,20 @@ export default function BookingPage({ user, onRequireLogin }) {
             </div>
 
             <Button
-              onClick={handleConfirmBooking}
-              disabled={isProcessing || !selectedSlot}
-              className="h-11 rounded-xl bg-white px-5 text-xs font-bold text-obsidian hover:bg-white/90 disabled:opacity-50"
+              onClick={bookingActive ? handleConfirmBooking : undefined}
+              disabled={bookingActive ? isProcessing || !selectedSlot : false}
+              className={`h-11 rounded-xl px-4 text-xs font-bold transition-all ${
+                !bookingActive
+                  ? 'border border-amber-500/30 bg-amber-500/15 text-amber-300'
+                  : 'bg-white text-obsidian hover:bg-white/90 disabled:opacity-50'
+              }`}
             >
-              {isProcessing ? (
+              {!bookingActive ? (
+                <>
+                  <Clock size={14} className="mr-1.5 text-amber-400" />
+                  Coming Soon
+                </>
+              ) : isProcessing ? (
                 <RefreshCw size={15} className="animate-spin" />
               ) : (
                 <>

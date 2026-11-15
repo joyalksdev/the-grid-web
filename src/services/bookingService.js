@@ -37,6 +37,11 @@ export const bookingService = {
     return response.data;
   },
 
+  createGta6ManualBooking: async (bookingData) => {
+    const response = await API.post('/public/bookings/gta6-manual', bookingData);
+    return response.data;
+  },
+
   getPublicTicket: async (token) => {
     const response = await API.get(`/public/ticket/${token}`);
     return response.data;

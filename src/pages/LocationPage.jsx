@@ -10,31 +10,55 @@ import {
   Sofa,
   Gamepad2,
   ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import SpotlightCard from '@/components/SpotlightCard';
+import CircularGallery from '@/components/CircularGallery';
 import gridData from '@/data/gridData.json';
+import { isBookingEnabled } from '@/utils/bookingConfig';
+
+// High-resolution dummy & lounge images for a clean, immersive look
+const SHOP_HERO_IMAGES = [
+  '/img/shop-1.jpg',
+  '/img/shop-2.jpg',
+  'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+  '/img/shop-3.jpg',
+  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
+  '/img/shop-4.jpg',
+  'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=800&q=80',
+];
 
 export default function LocationPage() {
   const navigate = useNavigate();
   const { loungeInfo, screens } = gridData;
+  const bookingActive = isBookingEnabled();
 
   return (
-    <section className="min-h-screen bg-obsidian pt-32 pb-24 text-white">
+    <section className="min-h-screen bg-obsidian pt-28 sm:pt-32 pb-24 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Top Header */}
-        <div className="mb-12 flex flex-col justify-between gap-4 border-b border-white/10 pb-8 md:flex-row md:items-end">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-neon">
-              {loungeInfo.address.area}, {loungeInfo.address.district}
-            </span>
-            <h1 className="font-display mt-2 text-4xl font-semibold leading-[1.06] tracking-tight sm:text-6xl">
-              Shop &amp; Location
-            </h1>
-          </div>
-
-          <p className="max-w-md text-sm text-white/60">
-            Visit The Grid Gaming Lounge at Town Square in Thondiyil, Peravoor. Fully air-conditioned comfort with PS5 4K TVs and our Logitech G923 SimDrive cockpit.
+        
+        {/* CLEAN HERO HEADER */}
+        <div className="mb-6 flex flex-col items-center text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-neon/30 bg-neon/10 px-3 py-1 text-xs font-semibold text-neon">
+            <Sparkles size={13} /> {loungeInfo.address.area}, {loungeInfo.address.district}
+          </span>
+          <h1 className="font-display mt-3 text-4xl font-extrabold tracking-tight sm:text-6xl text-white">
+            Inside The Lounge
+          </h1>
+          <p className="mt-2 max-w-xl text-sm sm:text-base text-white/60">
+            Take a 3D tour through our gaming stations, 4K setups, and cockpit racing rig.
           </p>
+        </div>
+
+        {/* 3D CIRCULAR GALLERY (CLEAN LOOK - NO TEXT OVERLAYS) */}
+        <div className="mb-14 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-[#0b0e17] via-obsidian to-obsidian p-2 sm:p-6 shadow-2xl shadow-neon/5">
+          <CircularGallery
+            items={SHOP_HERO_IMAGES}
+            radius={380}
+            autoSpin={true}
+            autoSpinSpeed={0.25}
+          />
         </div>
 
         {/* 3-Column Info Grid */}
@@ -86,6 +110,10 @@ export default function LocationPage() {
                   </div>
                 </div>
               </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3 text-[11px] text-white/50">
+                📍 Located at Ground Floor, Town Square Shopping Centre, Thondiyil, Peravoor.
+              </div>
             </div>
           </SpotlightCard>
 
@@ -98,54 +126,56 @@ export default function LocationPage() {
               <div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <span className="text-xs font-semibold text-white/60">
-                    Opening Hours
+                    Operating Hours
                   </span>
                   <Clock size={18} className="text-cyber" />
                 </div>
-                <h2 className="font-display mt-5 text-2xl font-semibold text-white">
-                  Open All Days
-                </h2>
-
-                <div className="mt-5 divide-y divide-white/10 rounded-xl border border-white/10 bg-obsidian text-xs">
-                  <div className="flex justify-between px-4 py-3.5">
-                    <span className="text-white/60">{loungeInfo.timings.days}</span>
+                <h3 className="font-display mt-5 text-2xl font-semibold text-white">
+                  Open All 7 Days
+                </h3>
+                <p className="mt-2 text-sm text-white/75">
+                  {loungeInfo.timings.days}
+                </p>
+                <div className="mt-6 space-y-2 rounded-xl border border-white/10 bg-obsidian p-4 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/60">Doors Open:</span>
                     <span className="font-semibold text-neon">
-                      {loungeInfo.timings.open} – {loungeInfo.timings.close}
+                      {loungeInfo.timings.open}
                     </span>
                   </div>
-                  <div className="flex justify-between px-4 py-3.5">
-                    <span className="text-white/60">Session Durations</span>
-                    <span className="font-medium text-white">
-                      15 Mins · 30 Mins · 1 Hour
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/60">Final Session:</span>
+                    <span className="font-semibold text-cyber">
+                      {loungeInfo.timings.close}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-white/55">
-                Walk in anytime or reserve your preferred time slot online in advance.
-              </p>
+              <div className="rounded-xl border border-neon/20 bg-neon/[0.04] p-3.5 text-xs text-white/80">
+                <span className="font-semibold text-neon">Walk-in Friendly:</span>{' '}
+                Stop by anytime during operating hours or message us on WhatsApp for fast reservations.
+              </div>
             </div>
           </SpotlightCard>
 
-          {/* Card 3: Lounge Comfort & Gear */}
+          {/* Card 3: Lounge Amenities */}
           <SpotlightCard
-            spotlightColor="rgba(255, 46, 136, 0.1)"
+            spotlightColor="rgba(255, 0, 102, 0.1)"
             className="rounded-2xl border border-white/10 bg-[#0d1017] p-7 sm:p-8"
           >
             <div className="flex h-full flex-col justify-between gap-8">
               <div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <span className="text-xs font-semibold text-white/60">
-                    Lounge Comfort &amp; Gear
+                    Premium Amenities
                   </span>
                   <Sofa size={18} className="text-vice" />
                 </div>
-                <h2 className="font-display mt-5 text-2xl font-semibold text-white">
-                  What&apos;s Inside
-                </h2>
-
-                <ul className="mt-5 space-y-2.5 text-xs text-white/75">
+                <h3 className="font-display mt-5 text-2xl font-semibold text-white">
+                  Pro Setup &amp; Comfort
+                </h3>
+                <ul className="mt-4 space-y-2 text-xs text-white/70">
                   {loungeInfo.amenities.map((item) => (
                     <li key={item} className="flex items-center gap-2.5">
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-neon" />
@@ -160,7 +190,7 @@ export default function LocationPage() {
                 onClick={() => navigate('/book')}
                 className="group flex w-full cursor-pointer items-center justify-between rounded-xl bg-white px-4 py-3 text-xs font-semibold text-obsidian transition-colors hover:bg-white/90"
               >
-                <span>Book Your Screen</span>
+                <span>{bookingActive ? 'Book Your Screen' : 'Calculate Session Rates'}</span>
                 <ArrowRight
                   size={14}
                   className="transition-transform group-hover:translate-x-0.5"
@@ -178,7 +208,7 @@ export default function LocationPage() {
                 Our 3 Gaming Screens &amp; Installed Games
               </h3>
               <p className="mt-0.5 text-xs text-white/55">
-                Customers cannot switch screens after booking — check which games are on each screen below.
+                Check which games are on each screen before you visit.
               </p>
             </div>
           </div>
@@ -232,7 +262,7 @@ export default function LocationPage() {
                   onClick={() => navigate(`/book?screen=${scr.code}`)}
                   className="mt-5 inline-flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-neon hover:text-white"
                 >
-                  Book {scr.name}
+                  {bookingActive ? `Book ${scr.name}` : `View ${scr.name} Rates`}
                   <ArrowRight size={13} />
                 </button>
               </div>

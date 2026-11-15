@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Phone, User, ArrowRight, CheckCircle2, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Mail,
+  Phone,
+  ArrowRight,
+  CheckCircle2,
+  RefreshCw,
+  ArrowLeft,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -12,65 +19,133 @@ import CodeSlots from '@/components/CodeSlots';
 import { useSwipeToast } from '@/components/SwipeToast';
 import { authService } from '@/services/authService';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function AuthModal({ open, onOpenChange, onSuccess }) {
   const toast = useSwipeToast();
-  const [step, setStep] = useState('phone'); // 'phone' | 'otp'
-  const [name, setName] = useState('');
+
+  // Steps: 'email' (Step 1) | 'register' (Step 2B - New User) | 'otp' (Step 2A / Final Verify)
+  const [step, setStep] = useState('email');
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [devCodeHint, setDevCodeHint] = useState('');
 
-  const handleSendOtp = async (e) => {
+  // Reset modal cleanly when closed
+  useEffect(() => {
+    if (!open) {
+      setError('');
+      setOtp('');
+      setDevCodeHint('');
+    }
+  }, [open]);
+
+  // Step 1: Identity Check by Email ID
+  const handleCheckEmail = async (e) => {
     e.preventDefault();
-    if (phone.length < 10) return;
+    const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
 
     setError('');
     setDevCodeHint('');
     setLoading(true);
+
     try {
-      const data = await authService.sendOtp({
-        phone,
-        name: name.trim() || 'Grid Player',
-      });
-      if (data?.devOtp) {
-        setDevCodeHint(data.devOtp);
-      }
-      setStep('otp');
-      toast.info(
-        'Verification Code Sent',
-        `Enter the 6-digit code sent to +91 ${phone}.`
-      );
-    } catch (err) {
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-        toast.error('Could Not Send Code', err.response.data.error);
-      } else if (import.meta.env.DEV && !err.response) {
+      const data = await authService.checkEmail(cleanEmail);
+      setEmail(cleanEmail);
+
+      if (data?.exists) {
+        // Step 2A: Existing User -> OTP already sent via Nodemailer
+        setIsNewUser(false);
+        if (data?.devOtp) {
+          setDevCodeHint(data.devOtp);
+        }
         setStep('otp');
-      } else {
-        setError('Could not send verification code. Please try again.');
-        toast.error(
-          'Connection Error',
-          'Could not send verification code. Please try again.'
+        toast.info?.(
+          'Verification Code Sent',
+          `Enter the 6-digit code sent to ${cleanEmail}.`
         );
+      } else {
+        // Step 2B: New User -> Smoothly transition to Registration with pre-filled email
+        setIsNewUser(true);
+        setStep('register');
       }
+    } catch (err) {
+      const msg =
+        err.response?.data?.error ||
+        'Could not check email address. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
+  // Step 2B: New User Registration -> Send Nodemailer OTP
+  const handleSendRegistrationOtp = async (e) => {
+    e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
+
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (cleanPhone.length !== 10) {
+      setError('Please enter a valid 10-digit WhatsApp number.');
+      return;
+    }
+
+    setError('');
+    setDevCodeHint('');
+    setLoading(true);
+
+    try {
+      const data = await authService.sendEmailOtp({
+        email: cleanEmail,
+        phone: cleanPhone,
+      });
+
+      if (data?.devOtp) {
+        setDevCodeHint(data.devOtp);
+      }
+
+      setStep('otp');
+      toast.info?.(
+        'Verification Code Sent',
+        `Enter the 6-digit code sent to ${cleanEmail}.`
+      );
+    } catch (err) {
+      const msg =
+        err.response?.data?.error ||
+        'Could not send verification email. Please try again.';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Verify Nodemailer OTP (Login or Create Account)
   const handleVerifyOtp = async (e) => {
     if (e) e.preventDefault();
     if (otp.length < 6) return;
 
     setError('');
     setLoading(true);
+
     try {
-      const data = await authService.verifyOtp({
-        phone,
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
+
+      const data = await authService.verifyEmailOtp({
+        email: cleanEmail,
         otp,
-        name: name.trim() || 'Grid Player',
+        phone: cleanPhone || undefined,
       });
 
       if (data?.token) {
@@ -78,38 +153,24 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
       }
 
       const verifiedUser = data?.user || {
-        name: name.trim() || 'Grid Player',
-        phone: `+91 ${phone}`,
+        name: cleanEmail.split('@')[0],
+        email: cleanEmail,
+        phone: cleanPhone ? `+91 ${cleanPhone}` : '',
       };
 
-      onSuccess?.(verifiedUser);
-      toast.success(
-        `Welcome, ${verifiedUser.name}!`,
-        'Your WhatsApp number is verified and ready to book.'
-      );
-
-      setStep('phone');
+      // Reset internal step state before closing
+      setStep('email');
       setOtp('');
       setDevCodeHint('');
       onOpenChange(false);
+
+      // Trigger parent callback (which also auto-resumes GTA 6 booking if pending)
+      onSuccess?.(verifiedUser);
     } catch (err) {
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-        toast.error('Verification Failed', err.response.data.error);
-      } else if (import.meta.env.DEV && !err.response) {
-        const fallbackUser = {
-          name: name.trim() || 'Grid Player',
-          phone: `+91 ${phone}`,
-        };
-        onSuccess?.(fallbackUser);
-        toast.success(`Signed in as ${fallbackUser.name}`);
-        setStep('phone');
-        setOtp('');
-        onOpenChange(false);
-      } else {
-        setError('Could not verify code. Please try again.');
-        toast.error('Verification Error', 'Could not verify code. Please try again.');
-      }
+      const msg =
+        err.response?.data?.error ||
+        'Invalid or expired verification code. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -120,12 +181,18 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
       <DialogContent className="sm:max-w-md border border-white/15 bg-obsidian text-white rounded-2xl p-6 sm:p-7">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl font-semibold tracking-tight text-white">
-            {step === 'phone' ? 'Sign In to Book' : 'Enter Verification Code'}
+            {step === 'email'
+              ? 'Continue with Email'
+              : step === 'register'
+              ? 'Complete Registration'
+              : 'Verify Your Email'}
           </DialogTitle>
           <DialogDescription className="text-xs text-white/60">
-            {step === 'phone'
-              ? 'Enter your name and WhatsApp number so we can send your booking confirmation pass.'
-              : `We sent a 6-digit verification code to +91 ${phone}.`}
+            {step === 'email'
+              ? 'Enter your email address to sign in or create your Grid account.'
+              : step === 'register'
+              ? 'Looks like you are new here! Add your WhatsApp number to receive your GTA 6 pass.'
+              : `We sent a 6-digit verification code to ${email}.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -135,62 +202,138 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
           </div>
         )}
 
-        {step === 'phone' ? (
-          <form onSubmit={handleSendOtp} className="mt-4 space-y-4">
+        {/* STEP 1: IDENTITY CHECK (EMAIL ONLY) */}
+        {step === 'email' && (
+          <form onSubmit={handleCheckEmail} className="mt-4 space-y-4">
             <div>
               <label className="text-xs font-medium text-white/70">
-                Your Name
+                Email Address
               </label>
-              <div className="mt-1.5 flex items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 py-2.5 focus-within:border-white/40">
-                <User size={15} className="mr-2.5 text-neon" />
+              <div className="mt-1.5 flex items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 py-2.5 focus-within:border-neon">
+                <Mail size={15} className="mr-2.5 text-neon shrink-0" />
                 <input
-                  type="text"
+                  type="email"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full bg-transparent text-sm font-semibold text-white outline-none placeholder:text-white/25"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-white/70">
-                WhatsApp Mobile Number
-              </label>
-              <div className="mt-1.5 flex items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 py-2.5 focus-within:border-white/40">
-                <Phone size={15} className="mr-2.5 text-neon" />
-                <span className="mr-2 text-xs font-medium text-white/50">+91</span>
-                <input
-                  type="tel"
-                  maxLength={10}
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                  placeholder="98765 43210"
-                  className="w-full bg-transparent text-sm font-semibold text-white outline-none placeholder:text-white/25"
+                  autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full bg-transparent text-sm font-medium text-white outline-none placeholder:text-white/25"
                 />
               </div>
             </div>
 
             <Button
               type="submit"
-              disabled={loading || phone.length < 10}
-              className="h-11 w-full cursor-pointer rounded-xl bg-white text-xs font-semibold text-obsidian hover:bg-white/90"
+              disabled={loading || !email.trim()}
+              className="h-11 w-full cursor-pointer rounded-xl bg-neon text-xs font-bold text-obsidian hover:bg-neon/90"
             >
               {loading ? (
                 <>
                   <RefreshCw size={15} className="mr-1.5 animate-spin" />
-                  Sending Code...
+                  Checking...
                 </>
               ) : (
                 <>
-                  Send Verification Code <ArrowRight size={15} className="ml-1.5" />
+                  Continue <ArrowRight size={15} className="ml-1.5" />
                 </>
               )}
             </Button>
           </form>
-        ) : (
+        )}
+
+        {/* STEP 2B: NEW USER SEAMLESS REGISTRATION */}
+        {step === 'register' && (
+          <form onSubmit={handleSendRegistrationOtp} className="mt-4 space-y-4">
+            <div>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-white/70">
+                  Email Address
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setError('');
+                    setStep('email');
+                  }}
+                  className="text-[11px] font-medium text-neon hover:underline cursor-pointer"
+                >
+                  Change
+                </button>
+              </div>
+              <div className="mt-1.5 flex items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 py-2.5 focus-within:border-neon">
+                <Mail size={15} className="mr-2.5 text-neon shrink-0" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-transparent text-sm font-medium text-white outline-none placeholder:text-white/25"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-white/70">
+                WhatsApp Number <span className="text-neon">*</span>
+              </label>
+              <div className="mt-1.5 flex items-center rounded-xl border border-white/15 bg-white/[0.03] px-3.5 py-2.5 focus-within:border-neon">
+                <Phone size={15} className="mr-2.5 text-neon shrink-0" />
+                <span className="mr-2 text-xs font-mono font-medium text-white/50">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  maxLength={10}
+                  required
+                  autoFocus
+                  value={phone}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))
+                  }
+                  placeholder="98765 43210"
+                  className="w-full bg-transparent font-mono text-sm font-semibold text-white outline-none placeholder:text-white/25"
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-white/45">
+                Used to verify your booking and deliver your digital pass on WhatsApp.
+              </p>
+            </div>
+
+            <div className="flex gap-2.5 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setError('');
+                  setStep('email');
+                }}
+                className="h-11 w-1/3 cursor-pointer rounded-xl border-white/15 bg-transparent text-xs text-white hover:bg-white/[0.06]"
+              >
+                <ArrowLeft size={14} className="mr-1" /> Back
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading || phone.replace(/\D/g, '').length !== 10}
+                className="h-11 w-2/3 cursor-pointer rounded-xl bg-neon text-xs font-bold text-obsidian hover:bg-neon/90"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw size={15} className="mr-1.5 animate-spin" />
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    Send Email OTP <ArrowRight size={15} className="ml-1.5" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* STEP 2A / FINAL: OTP VERIFICATION */}
+        {step === 'otp' && (
           <form onSubmit={handleVerifyOtp} className="mt-4 space-y-4">
             {devCodeHint && (
               <button
@@ -198,7 +341,7 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
                 onClick={() => setOtp(String(devCodeHint))}
                 className="w-full cursor-pointer rounded-xl border border-neon/30 bg-neon/10 px-3 py-2 text-center text-xs text-neon transition-colors hover:bg-neon/15"
               >
-                Test Code: <strong>{devCodeHint}</strong>{' '}
+                Dev OTP: <strong>{devCodeHint}</strong>{' '}
                 <span className="text-[10px] text-white/60">(Click to fill)</span>
               </button>
             )}
@@ -206,14 +349,13 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <label className="text-xs font-medium text-white/70">
-                  6-Digit Verification Code
+                  6-Digit Email Verification Code
                 </label>
                 <span className="text-[11px] font-mono text-white/45">
                   {otp.length}/6 digits
                 </span>
               </div>
 
-              {/* React Bits CodeSlots Component */}
               <CodeSlots
                 length={6}
                 value={otp}
@@ -229,7 +371,7 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
                 onClick={() => {
                   setError('');
                   setOtp('');
-                  setStep('phone');
+                  setStep(isNewUser ? 'register' : 'email');
                 }}
                 className="h-11 w-1/3 cursor-pointer rounded-xl border-white/15 bg-transparent text-xs text-white hover:bg-white/[0.06]"
               >
@@ -238,7 +380,7 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
               <Button
                 type="submit"
                 disabled={loading || otp.length < 6}
-                className="h-11 w-2/3 cursor-pointer rounded-xl bg-white text-xs font-semibold text-obsidian hover:bg-white/90"
+                className="h-11 w-2/3 cursor-pointer rounded-xl bg-neon text-xs font-bold text-obsidian hover:bg-neon/90"
               >
                 {loading ? (
                   <>

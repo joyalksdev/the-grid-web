@@ -4,6 +4,7 @@ import { Tv, Gamepad2, ArrowRight, Sparkles, Users } from 'lucide-react';
 import SpotlightCard from '@/components/SpotlightCard';
 import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
+import { isBookingEnabled } from '@/utils/bookingConfig';
 
 const SCREEN_FILTERS = [
   { id: 'all', label: 'All Games' },
@@ -231,7 +232,7 @@ export default function GamesPage({ embedded = false }) {
                     }
                     className="group/btn inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-white transition-colors hover:text-neon shrink-0"
                   >
-                    Book Screen
+                    {isBookingEnabled() ? 'Book Screen' : 'View Rates'}
                     <ArrowRight
                       size={13}
                       className="transition-transform group-hover/btn:translate-x-0.5"

@@ -8,6 +8,7 @@ import CurvedLoop from '@/components/CurvedLoop';
 import GradientText from '@/components/GradientText';
 import AnimatedContent from '@/components/AnimatedContent';
 import BorderGlow from '@/components/BorderGlow';
+import { isBookingEnabled } from '@/utils/bookingConfig';
 import gridData from '@/data/gridData.json';
 
 const LOUNGE_SPECS = [
@@ -144,7 +145,7 @@ export default function GridHero() {
                 className="group h-12 cursor-pointer rounded-xl bg-white px-7 text-sm font-semibold text-black transition-colors hover:bg-white/90 sm:text-base"
               >
                 <Ticket size={18} className="mr-2" />
-                Book Your Screen
+                {isBookingEnabled() ? 'Book Your Screen' : 'Explore Screens & Rates'}
                 <ArrowRight
                   size={16}
                   className="ml-2 transition-transform group-hover:translate-x-1"

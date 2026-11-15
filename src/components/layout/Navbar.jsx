@@ -14,6 +14,8 @@ import {
   LogOut,
   QrCode,
   Phone,
+  AlertTriangle,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,11 +36,14 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import gridData from '@/data/gridData.json';
+import { isBookingEnabled } from '@/utils/bookingConfig';
 
 const TARGET_DATE = new Date('2026-11-15T23:59:59').getTime();
 
 export default function Navbar({ user, onLoginClick, onLogout }) {
   const navigate = useNavigate();
+  const bookingActive = isBookingEnabled();
+  const [showWarningBanner, setShowWarningBanner] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: '04',
     hours: '05',
@@ -70,6 +75,28 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    // If online booking is disabled, show notice banner for 30s unless dismissed
+    if (!bookingActive) {
+      const isDismissed = localStorage.getItem('grid_notice_dismissed') === 'true';
+      if (!isDismissed) {
+        setShowWarningBanner(true);
+        const autoDismissTimer = setTimeout(() => {
+          setShowWarningBanner(false);
+        }, 30000); // 30 seconds
+        return () => clearTimeout(autoDismissTimer);
+      }
+    } else {
+      setShowWarningBanner(false);
+    }
+  }, [bookingActive]);
+
+  const handleDismissWarning = (e) => {
+    e.stopPropagation();
+    setShowWarningBanner(false);
+    localStorage.setItem('grid_notice_dismissed', 'true');
+  };
+
   const goToBooking = () => {
     setMobileOpen(false);
     navigate('/book');
@@ -84,58 +111,89 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex flex-col select-none">
-      {/* 1. TOP CLICKABLE COUNTDOWN BANNER */}
-      <div
-        onClick={() => navigate('/book?mode=GTA6_Launch&duration=60')}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) =>
-          e.key === 'Enter' && navigate('/book?mode=GTA6_Launch&duration=60')
-        }
-        className="group relative flex h-9 sm:h-10 w-full cursor-pointer items-center justify-center border-b border-white/[0.08] bg-gradient-to-r from-obsidian via-[#191129] to-obsidian px-2.5 sm:px-4 transition-colors hover:via-[#221638]"
-      >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between sm:justify-center gap-2 sm:gap-4 text-xs">
-          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-            <Badge
-              variant="outline"
-              className="hidden md:inline-flex border-vice/40 bg-vice/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-vice uppercase"
-            >
-              <Flame size={11} className="mr-1" /> Launch Special
-            </Badge>
-
-            <div className="flex items-center gap-1.5 sm:gap-2 text-white/90">
-              <Clock size={13} className="text-neon shrink-0" />
-              <span className="text-[11px] sm:text-xs font-semibold tracking-tight whitespace-nowrap">
-                <span className="sm:hidden">GTA 6:</span>
-                <span className="hidden sm:inline">GTA 6 Launch Countdown:</span>
+      {/* 1. TOP BANNER: WARNING NOTICE (if booking false) OR GTA 6 COUNTDOWN */}
+      {showWarningBanner ? (
+        <div className="relative flex h-9 sm:h-10 w-full items-center justify-center border-b border-amber-500/20 bg-gradient-to-r from-[#201408] via-[#2f1b0a] to-[#201408] px-3 sm:px-4 text-xs">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 text-amber-200">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-400">
+                <AlertTriangle size={12} />
               </span>
+              <span className="text-[11px] sm:text-xs font-medium">
+                <strong className="font-semibold text-amber-300">Notice:</strong> Online checkout is launching soon! Walk-ins &amp; offline counter bookings are open.
+              </span>
+            </div>
 
-              <div className="flex items-center gap-0.5 sm:gap-1 font-mono text-[11px] sm:text-xs font-bold text-neon tabular-nums">
-                <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                  {timeLeft.days}d
-                </span>
-                <span className="text-white/40">:</span>
-                <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                  {timeLeft.hours}h
-                </span>
-                <span className="text-white/40">:</span>
-                <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                  {timeLeft.mins}m
-                </span>
-                <span className="text-white/40">:</span>
-                <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                  {timeLeft.secs}s
-                </span>
-              </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => navigate('/book')}
+                className="hidden sm:inline-flex rounded-full bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-300 hover:bg-amber-400/25"
+              >
+                Preview Pricing &amp; Rates
+              </button>
+              <button
+                type="button"
+                onClick={handleDismissWarning}
+                title="Dismiss notice"
+                className="rounded-md p-1 text-white/50 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+              >
+                <X size={14} />
+              </button>
             </div>
           </div>
-
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-neon/15 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-neon border border-neon/30 transition-all group-hover:translate-x-0.5 group-hover:bg-neon group-hover:text-obsidian">
-            <span>Book GTA 6</span>
-            <ArrowRight size={11} />
-          </span>
         </div>
-      </div>
+      ) : (
+        <div
+          onClick={() => navigate('/book')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && navigate('/book')}
+          className="group relative flex h-9 sm:h-10 w-full cursor-pointer items-center justify-center border-b border-white/[0.08] bg-gradient-to-r from-obsidian via-[#191129] to-obsidian px-2.5 sm:px-4 transition-colors hover:via-[#221638]"
+        >
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between sm:justify-center gap-2 sm:gap-4 text-xs">
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <Badge
+                variant="outline"
+                className="hidden md:inline-flex border-vice/40 bg-vice/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-vice uppercase"
+              >
+                <Flame size={11} className="mr-1" /> Launch Special
+              </Badge>
+
+              <div className="flex items-center gap-1.5 sm:gap-2 text-white/90">
+                <Clock size={13} className="text-neon shrink-0" />
+                <span className="text-[11px] sm:text-xs font-semibold tracking-tight whitespace-nowrap">
+                  <span className="sm:hidden">GTA 6:</span>
+                  <span className="hidden sm:inline">GTA 6 Launch Countdown:</span>
+                </span>
+
+                <div className="flex items-center gap-0.5 sm:gap-1 font-mono text-[11px] sm:text-xs font-bold text-neon tabular-nums">
+                  <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
+                    {timeLeft.days}d
+                  </span>
+                  <span className="text-white/40">:</span>
+                  <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
+                    {timeLeft.hours}h
+                  </span>
+                  <span className="text-white/40">:</span>
+                  <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
+                    {timeLeft.mins}m
+                  </span>
+                  <span className="text-white/40">:</span>
+                  <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
+                    {timeLeft.secs}s
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-neon/15 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-neon border border-neon/30 transition-all group-hover:translate-x-0.5 group-hover:bg-neon group-hover:text-obsidian">
+              <span>Book GTA 6</span>
+              <ArrowRight size={11} />
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* 2. MAIN NAVBAR */}
       <div className="border-b border-white/[0.08] bg-obsidian/85 backdrop-blur-xl">
@@ -202,7 +260,11 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                         {user.name?.slice(0, 2).toUpperCase() || 'GG'}
                       </AvatarFallback>
                     </Avatar>
-                    <span>{user.phone.slice(-4)}</span>
+                    <span>
+                      {user.phone
+                        ? user.phone.slice(-4)
+                        : user.email?.split('@')[0] || 'Player'}
+                    </span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -214,7 +276,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                       {user.name || 'Grid Player'}
                     </span>
                     <span className="text-[11px] text-white/50">
-                      {user.phone}
+                      {user.email || user.phone}
                     </span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-white/10" />
@@ -230,7 +292,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                     className="cursor-pointer text-xs focus:bg-white/10 focus:text-white"
                   >
                     <QrCode size={14} className="mr-2 text-cyber" />
-                    Book a Screen
+                    Book GTA 6
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem
@@ -257,10 +319,10 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
             <Button
               size="sm"
               onClick={goToBooking}
-              className="h-9 rounded-lg bg-white px-4 text-xs font-semibold text-obsidian transition-colors hover:bg-white/90 cursor-pointer"
+              className="h-9 rounded-xl bg-neon px-4 text-xs font-extrabold text-obsidian shadow-[0_0_20px_-6px_rgba(0,255,102,0.5)] transition-all hover:bg-neon/90 cursor-pointer"
             >
-              <Ticket size={14} className="mr-1.5" />
-              Book Your Screen
+              <Flame size={14} className="mr-1.5" />
+              Book GTA 6
             </Button>
           </div>
 
@@ -269,10 +331,10 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
             <Button
               size="sm"
               onClick={goToBooking}
-              className="h-8 rounded-lg bg-white px-3 text-[11px] font-semibold text-obsidian active:scale-95"
+              className="h-8 rounded-lg bg-neon px-3 text-[11px] font-extrabold text-obsidian active:scale-95 cursor-pointer"
             >
-              <Ticket size={13} className="mr-1" />
-              Book Now
+              <Flame size={13} className="mr-1" />
+              Book GTA 6
             </Button>
 
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -445,10 +507,10 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
 
                     <Button
                       onClick={goToBooking}
-                      className="h-11 rounded-lg bg-white text-xs font-semibold text-obsidian hover:bg-white/90"
+                      className="h-11 rounded-xl bg-neon text-xs font-extrabold text-obsidian hover:bg-neon/90"
                     >
-                      <Ticket size={15} className="mr-1.5" />
-                      Book Screen
+                      <Flame size={15} className="mr-1.5" />
+                      Book GTA 6
                     </Button>
                   </div>
                 </div>

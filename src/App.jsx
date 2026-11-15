@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import AuthModal from './pages/auth/AuthModal';
 import HomePage from './pages/HomePage';
 import GamesPage from './pages/GamesPage';
 import LocationPage from './pages/LocationPage';
-import BookingPage from './pages/BookingPage';
+import Gta6ManualBookingPage from './pages/Gta6ManualBookingPage';
 import GtaViPage from './pages/GtaViPage';
 import TicketPage from './pages/TicketPage';
 import ProfilePage from './pages/ProfilePage';
@@ -34,10 +34,30 @@ export default function App() {
     }
   });
   const [authOpen, setAuthOpen] = useState(false);
+  const pendingAuthCallbackRef = useRef(null);
+
+  const handleRequireLogin = useCallback((resumeCallback) => {
+    pendingAuthCallbackRef.current =
+      typeof resumeCallback === 'function' ? resumeCallback : null;
+    setAuthOpen(true);
+  }, []);
+
+  const handleAuthOpenChange = useCallback((nextOpen) => {
+    setAuthOpen(nextOpen);
+    if (!nextOpen) {
+      pendingAuthCallbackRef.current = null;
+    }
+  }, []);
 
   const handleLoginSuccess = useCallback((loggedInUser) => {
     setUser(loggedInUser);
     localStorage.setItem('grid_user', JSON.stringify(loggedInUser));
+
+    if (typeof pendingAuthCallbackRef.current === 'function') {
+      const resumeFn = pendingAuthCallbackRef.current;
+      pendingAuthCallbackRef.current = null;
+      resumeFn(loggedInUser);
+    }
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -54,7 +74,7 @@ export default function App() {
         {/* Fixed SaaS Navbar + Top GTA VI Countdown Banner */}
         <Navbar
           user={user}
-          onLoginClick={() => setAuthOpen(true)}
+          onLoginClick={() => handleRequireLogin()}
           onLogout={handleLogout}
         />
 
@@ -79,9 +99,18 @@ export default function App() {
               <Route
                 path="/book"
                 element={
-                  <BookingPage
+                  <Gta6ManualBookingPage
                     user={user}
-                    onRequireLogin={() => setAuthOpen(true)}
+                    onRequireLogin={handleRequireLogin}
+                  />
+                }
+              />
+              <Route
+                path="/book-gta6"
+                element={
+                  <Gta6ManualBookingPage
+                    user={user}
+                    onRequireLogin={handleRequireLogin}
                   />
                 }
               />
@@ -92,7 +121,7 @@ export default function App() {
                   <ProfilePage
                     user={user}
                     onUserUpdate={handleLoginSuccess}
-                    onRequireLogin={() => setAuthOpen(true)}
+                    onRequireLogin={handleRequireLogin}
                     onLogout={handleLogout}
                   />
                 }
@@ -103,10 +132,10 @@ export default function App() {
 
         <Footer />
 
-        {/* Fast2SMS WhatsApp OTP Auth Modal */}
+        {/* Dynamic Nodemailer Email OTP Auth Modal */}
         <AuthModal
           open={authOpen}
-          onOpenChange={setAuthOpen}
+          onOpenChange={handleAuthOpenChange}
           onSuccess={handleLoginSuccess}
         />
       </div>
