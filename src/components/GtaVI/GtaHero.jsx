@@ -12,7 +12,7 @@ import { Ticket, Tv, Clock, Gamepad2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const LAUNCH = new Date('2026-11-15T23:59:59+05:30').getTime();
+const LAUNCH = new Date('2026-11-19T00:00:00+05:30').getTime();
 
 function useCountdown() {
   const [now, setNow] = useState(() => Date.now());
