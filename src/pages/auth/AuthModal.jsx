@@ -32,14 +32,12 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [devCodeHint, setDevCodeHint] = useState('');
 
   // Reset modal cleanly when closed
   useEffect(() => {
     if (!open) {
       setError('');
       setOtp('');
-      setDevCodeHint('');
     }
   }, [open]);
 
@@ -53,7 +51,6 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
     }
 
     setError('');
-    setDevCodeHint('');
     setLoading(true);
 
     try {
@@ -63,9 +60,6 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
       if (data?.exists) {
         // Step 2A: Existing User -> OTP already sent via Nodemailer
         setIsNewUser(false);
-        if (data?.devOtp) {
-          setDevCodeHint(data.devOtp);
-        }
         setStep('otp');
         toast.info?.(
           'Verification Code Sent',
@@ -102,18 +96,13 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
     }
 
     setError('');
-    setDevCodeHint('');
     setLoading(true);
 
     try {
-      const data = await authService.sendEmailOtp({
+      await authService.sendEmailOtp({
         email: cleanEmail,
         phone: cleanPhone,
       });
-
-      if (data?.devOtp) {
-        setDevCodeHint(data.devOtp);
-      }
 
       setStep('otp');
       toast.info?.(
@@ -161,7 +150,6 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
       // Reset internal step state before closing
       setStep('email');
       setOtp('');
-      setDevCodeHint('');
       onOpenChange(false);
 
       // Trigger parent callback (which also auto-resumes GTA 6 booking if pending)
@@ -335,17 +323,6 @@ export default function AuthModal({ open, onOpenChange, onSuccess }) {
         {/* STEP 2A / FINAL: OTP VERIFICATION */}
         {step === 'otp' && (
           <form onSubmit={handleVerifyOtp} className="mt-4 space-y-4">
-            {devCodeHint && (
-              <button
-                type="button"
-                onClick={() => setOtp(String(devCodeHint))}
-                className="w-full cursor-pointer rounded-xl border border-neon/30 bg-neon/10 px-3 py-2 text-center text-xs text-neon transition-colors hover:bg-neon/15"
-              >
-                Dev OTP: <strong>{devCodeHint}</strong>{' '}
-                <span className="text-[10px] text-white/60">(Click to fill)</span>
-              </button>
-            )}
-
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <label className="text-xs font-medium text-white/70">
