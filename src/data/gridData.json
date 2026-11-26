@@ -37,7 +37,7 @@
       "tv": "55\" TCL 4K HDR TV",
       "console": "PS5 Disc Edition",
       "simRig": null,
-      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA6_Launch"],
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA 6"],
       "highlight": "Largest 55\" 4K screen — ideal for 1 to 4 players & couch multiplayer",
       "games": [
         "Grand Theft Auto V",
@@ -58,7 +58,7 @@
       "tv": "43\" TCL 4K UHD TV",
       "console": "PS5 Disc Edition",
       "simRig": null,
-      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA6_Launch"],
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "GTA 6"],
       "highlight": "Loaded with story blockbusters, GTA V, WWE 2K24 & Gran Turismo 7",
       "games": [
         "Grand Theft Auto V",
@@ -82,7 +82,7 @@
         "cockpit": "TRONE RS1 Aero Black Racing Simulator Gaming Chair with Adjustable Cockpit",
         "note": "Can be booked for SimDrive racing OR standard controller gaming"
       },
-      "supportedModes": ["Single", "Dual", "Triple", "Big", "SimDrive", "GTA6_Launch"],
+      "supportedModes": ["Single", "Dual", "Triple", "Big", "SimDrive", "GTA 6"],
       "highlight": "Dual-purpose station: PS5 Slim controller gaming + Logitech G923 Racing Cockpit",
       "games": [
         "Forza Horizon 5",
@@ -245,10 +245,17 @@
       "sessions": { "15": 90, "30": 170, "60": 290 },
       "extensions": { "15": 80, "30": 150, "60": 260 }
     },
-    "GTA6_Launch": {
-      "label": "GTA 6 — Launch Special",
+    "GTA 6": {
+      "label": "GTA 6",
       "players": 1,
-      "description": "First 7 Days Launch Exclusive (No 15-min slots)",
+      "description": "Grand Theft Auto VI on PS5 (No 15-min slots)",
+      "sessions": { "30": 150, "60": 250 },
+      "extensions": { "30": 130, "60": 230 }
+    },
+    "GTA6_Launch": {
+      "label": "GTA 6",
+      "players": 1,
+      "description": "Grand Theft Auto VI on PS5 (No 15-min slots)",
       "sessions": { "30": 150, "60": 250 },
       "extensions": { "30": 130, "60": 230 }
     }

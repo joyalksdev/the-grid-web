@@ -9,7 +9,8 @@ import ShinyText from '@/components/ShinyText';
 import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
 
-const defaultGtaPricing = gridData.pricingMatrix.GTA6_Launch;
+const defaultGtaPricing =
+  gridData.pricingMatrix['GTA 6'] || gridData.pricingMatrix.GTA6_Launch;
 
 export default function GtaSpotlightSection() {
   const navigate = useNavigate();
@@ -21,16 +22,18 @@ export default function GtaSpotlightSection() {
       .getPublicConfig()
       .then((data) => {
         if (!active) return;
-        if (data?.pricing?.matrix?.GTA6_Launch) {
+        const remoteGta =
+          data?.pricing?.matrix?.['GTA 6'] || data?.pricing?.matrix?.GTA6_Launch;
+        if (remoteGta) {
           setGtaPricing({
             ...defaultGtaPricing,
             sessions: {
               ...defaultGtaPricing.sessions,
-              ...(data.pricing.matrix.GTA6_Launch.sessions || {}),
+              ...(remoteGta.sessions || {}),
             },
             extensions: {
               ...defaultGtaPricing.extensions,
-              ...(data.pricing.matrix.GTA6_Launch.extensions || {}),
+              ...(remoteGta.extensions || {}),
             },
           });
         }

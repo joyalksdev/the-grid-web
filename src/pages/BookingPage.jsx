@@ -59,9 +59,9 @@ const MODE_OPTIONS = [
     icon: Gauge,
   },
   {
-    key: 'GTA6_Launch',
-    label: 'GTA 6 Special',
-    tag: 'Launch Pass',
+    key: 'GTA 6',
+    label: 'GTA 6',
+    tag: '1 Player · PS5',
     icon: Flame,
   },
 ];
@@ -146,7 +146,8 @@ function normalizeBookingScreenCode(item) {
 
 function normalizeModeParam(rawMode) {
   if (!rawMode) return 'Single';
-  if (rawMode === 'GTA6' || rawMode === 'GTA6_Launch') return 'GTA6_Launch';
+  if (rawMode === 'GTA6' || rawMode === 'GTA6_Launch' || rawMode === 'GTA 6')
+    return 'GTA 6';
   if (defaultPricingMatrix[rawMode]) return rawMode;
   return 'Single';
 }
@@ -240,7 +241,7 @@ export default function BookingPage({ user, onRequireLogin }) {
   }, [selectedScreenCode, currentScreenGames, queryGame]);
 
   useEffect(() => {
-    if (selectedMode === 'GTA6_Launch' && duration === '15') {
+    if ((selectedMode === 'GTA 6' || selectedMode === 'GTA6_Launch') && duration === '15') {
       setDuration('60');
     }
   }, [selectedMode, duration]);
@@ -272,17 +273,21 @@ export default function BookingPage({ user, onRequireLogin }) {
         if (!data?.pricing?.matrix) return;
         setLiveMatrix((prev) => {
           const merged = { ...prev };
+          const remoteMatrix = { ...data.pricing.matrix };
+          if (remoteMatrix.GTA6_Launch && !remoteMatrix['GTA 6']) {
+            remoteMatrix['GTA 6'] = remoteMatrix.GTA6_Launch;
+          }
           for (const key of Object.keys(prev)) {
-            if (data.pricing.matrix[key]) {
+            if (remoteMatrix[key]) {
               merged[key] = {
                 ...prev[key],
                 sessions: {
                   ...prev[key].sessions,
-                  ...data.pricing.matrix[key].sessions,
+                  ...remoteMatrix[key].sessions,
                 },
                 extensions: {
                   ...prev[key].extensions,
-                  ...data.pricing.matrix[key].extensions,
+                  ...remoteMatrix[key].extensions,
                 },
               };
             }
@@ -355,7 +360,7 @@ export default function BookingPage({ user, onRequireLogin }) {
     if (modeKey === 'SimDrive') {
       setSelectedScreenCode('Screen3');
     }
-    if (modeKey === 'GTA6_Launch' && duration === '15') {
+    if ((modeKey === 'GTA 6' || modeKey === 'GTA6_Launch') && duration === '15') {
       setDuration('60');
     }
   };
@@ -376,7 +381,7 @@ export default function BookingPage({ user, onRequireLogin }) {
     defaultPricingMatrix.Single;
 
   const availableDurations =
-    selectedMode === 'GTA6_Launch'
+    selectedMode === 'GTA 6' || selectedMode === 'GTA6_Launch'
       ? [
           { mins: '30', label: '30 Mins' },
           { mins: '60', label: '1 Hour' },
@@ -388,7 +393,10 @@ export default function BookingPage({ user, onRequireLogin }) {
         ];
 
   const effectiveDuration =
-    selectedMode === 'GTA6_Launch' && duration === '15' ? '60' : duration;
+    (selectedMode === 'GTA 6' || selectedMode === 'GTA6_Launch') &&
+    duration === '15'
+      ? '60'
+      : duration;
   const baseSessionPrice =
     currentModeConfig.sessions[effectiveDuration] ||
     currentModeConfig.sessions['60'] ||
@@ -953,7 +961,8 @@ export default function BookingPage({ user, onRequireLogin }) {
                     const mConfig =
                       liveMatrix[m.key] || defaultPricingMatrix[m.key];
                     const previewDuration =
-                      m.key === 'GTA6_Launch' && effectiveDuration === '15'
+                      (m.key === 'GTA 6' || m.key === 'GTA6_Launch') &&
+                      effectiveDuration === '15'
                         ? '60'
                         : effectiveDuration;
                     const modePrice = mConfig.sessions[previewDuration];

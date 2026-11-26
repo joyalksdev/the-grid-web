@@ -8,7 +8,8 @@ import SpotlightCard from '@/components/SpotlightCard';
 import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
 
-const defaultGtaPricing = gridData.pricingMatrix.GTA6_Launch;
+const defaultGtaPricing =
+  gridData.pricingMatrix['GTA 6'] || gridData.pricingMatrix.GTA6_Launch;
 const GTA6_SCREENS = gridData.screens.filter(
   (s) => s.code === 'Screen1' || s.code === 'Screen2'
 );
@@ -23,16 +24,18 @@ export default function GtaViPage() {
       .getPublicConfig()
       .then((data) => {
         if (!active) return;
-        if (data?.pricing?.matrix?.GTA6_Launch) {
+        const remoteGta =
+          data?.pricing?.matrix?.['GTA 6'] || data?.pricing?.matrix?.GTA6_Launch;
+        if (remoteGta) {
           setGtaPricing({
             ...defaultGtaPricing,
             sessions: {
               ...defaultGtaPricing.sessions,
-              ...(data.pricing.matrix.GTA6_Launch.sessions || {}),
+              ...(remoteGta.sessions || {}),
             },
             extensions: {
               ...defaultGtaPricing.extensions,
-              ...(data.pricing.matrix.GTA6_Launch.extensions || {}),
+              ...(remoteGta.extensions || {}),
             },
           });
         }

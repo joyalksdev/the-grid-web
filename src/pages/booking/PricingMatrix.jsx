@@ -74,14 +74,19 @@ export function buildModesList(matrix) {
       spotlight: 'rgba(0, 240, 255, 0.14)',
     },
     {
-      key: 'GTA6_Launch',
-      title: 'GTA 6 Session',
+      key: 'GTA 6',
+      title: 'GTA 6',
       playersLabel: '1 Player · Available Now',
       subtitle: 'Play Grand Theft Auto VI on PS5 (30m & 60m sessions)',
       icon: Flame,
-      sessions: m.GTA6_Launch?.sessions || defaultMatrix.GTA6_Launch.sessions,
+      sessions:
+        m['GTA 6']?.sessions ||
+        m.GTA6_Launch?.sessions ||
+        defaultMatrix['GTA 6'].sessions,
       extensions:
-        m.GTA6_Launch?.extensions || defaultMatrix.GTA6_Launch.extensions,
+        m['GTA 6']?.extensions ||
+        m.GTA6_Launch?.extensions ||
+        defaultMatrix['GTA 6'].extensions,
       screensNote: 'Screen 1 & Screen 2 (30m & 60m)',
       spotlight: 'rgba(255, 46, 136, 0.16)',
     },
@@ -107,17 +112,21 @@ export default function PricingMatrix({ onSelectMode, isFullPage = false }) {
         if (data?.pricing?.matrix) {
           setLiveMatrix((prev) => {
             const merged = { ...prev };
+            const remoteMatrix = { ...data.pricing.matrix };
+            if (remoteMatrix.GTA6_Launch && !remoteMatrix['GTA 6']) {
+              remoteMatrix['GTA 6'] = remoteMatrix.GTA6_Launch;
+            }
             for (const key of Object.keys(prev)) {
-              if (data.pricing.matrix[key]) {
+              if (remoteMatrix[key]) {
                 merged[key] = {
                   ...prev[key],
                   sessions: {
                     ...prev[key].sessions,
-                    ...(data.pricing.matrix[key].sessions || {}),
+                    ...(remoteMatrix[key].sessions || {}),
                   },
                   extensions: {
                     ...prev[key].extensions,
-                    ...(data.pricing.matrix[key].extensions || {}),
+                    ...(remoteMatrix[key].extensions || {}),
                   },
                 };
               }
@@ -140,13 +149,17 @@ export default function PricingMatrix({ onSelectMode, isFullPage = false }) {
 
   const handleChoose = (modeKey, mins) => {
     const validDuration =
-      modeKey === 'GTA6_Launch' && mins === '15' ? '30' : mins;
+      (modeKey === 'GTA 6' || modeKey === 'GTA6_Launch') && mins === '15'
+        ? '30'
+        : mins;
     const screenParam = modeKey === 'SimDrive' ? '&screen=Screen3' : '';
 
     if (onSelectMode) {
       onSelectMode(modeKey, Number(validDuration));
     } else {
-      navigate(`/book?mode=${modeKey}&duration=${validDuration}${screenParam}`);
+      navigate(
+        `/book?mode=${encodeURIComponent(modeKey)}&duration=${validDuration}${screenParam}`
+      );
     }
   };
 
@@ -205,7 +218,9 @@ export default function PricingMatrix({ onSelectMode, isFullPage = false }) {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {modes.map((item) => {
             const Icon = item.icon;
-            const isGta15 = item.key === 'GTA6_Launch' && duration === '15';
+            const isGta15 =
+              (item.key === 'GTA 6' || item.key === 'GTA6_Launch') &&
+              duration === '15';
             const displayDuration = isGta15 ? '30' : duration;
             const sessionPrice = item.sessions[displayDuration];
             const extensionPrice = item.extensions[displayDuration];

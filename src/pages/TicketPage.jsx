@@ -24,7 +24,7 @@ import { bookingService } from '@/services/bookingService';
 const MAPS_DIRECTIONS_URL = 'https://maps.app.goo.gl/abn9mNczw6RCNAcN7';
 
 function formatModeLabel(modeKey) {
-  if (modeKey === 'GTA6_Launch') return '1 Player · GTA 6 Launch';
+  if (modeKey === 'GTA 6' || modeKey === 'GTA6_Launch') return '1 Player · GTA 6';
   const modeConfig =
     gridData.pricingMatrix[modeKey] || gridData.pricingMatrix.Single;
   if (modeKey === 'Triple') return '3 Players (Triple)';
@@ -178,7 +178,8 @@ export default function TicketPage() {
 
   const isGta6 = Boolean(
     pass &&
-      (pass.modeKey === 'GTA6_Launch' ||
+      (pass.modeKey === 'GTA 6' ||
+        pass.modeKey === 'GTA6_Launch' ||
         pass.orderId ||
         /gta/i.test(pass.modeLabel || '') ||
         (Array.isArray(pass.games) &&

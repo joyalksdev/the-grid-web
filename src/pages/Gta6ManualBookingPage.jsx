@@ -133,8 +133,9 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
       .getPublicConfig()
       .then((data) => {
         if (!active) return;
-        if (data?.pricing?.matrix?.GTA6_Launch) {
-          const remoteGta = data.pricing.matrix.GTA6_Launch;
+        const remoteGta =
+          data?.pricing?.matrix?.['GTA 6'] || data?.pricing?.matrix?.GTA6_Launch;
+        if (remoteGta) {
           setGtaPricing({
             sessions: {
               ...DEFAULT_GTA6_PRICING.sessions,
@@ -327,7 +328,7 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
           baseSessionDuration: Number(baseDuration),
           duration: Number(baseDuration),
           extensionDuration: Number(extensionDuration),
-          mode: 'GTA6_Launch',
+          mode: 'GTA 6',
         };
 
         const res = await bookingService.createGta6ManualBooking(payload);

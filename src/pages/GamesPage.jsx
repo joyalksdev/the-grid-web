@@ -41,7 +41,7 @@ function formatTime12h(isoString) {
 
 function formatModeBadge(modeKey, playersCount) {
   if (modeKey === 'SimDrive') return 'SimDrive Rig';
-  if (modeKey === 'GTA6_Launch') return 'GTA 6 Session';
+  if (modeKey === 'GTA 6' || modeKey === 'GTA6_Launch') return 'GTA 6';
   const count = Number(playersCount || 1);
   return `${count} ${count === 1 ? 'Player' : 'Players'}`;
 }

@@ -27,7 +27,7 @@ function formatModeLabel(modeKey) {
     gridData.pricingMatrix[modeKey] || gridData.pricingMatrix.Single;
   if (modeKey === 'Triple') return '3 Players (Triple)';
   if (modeKey === 'SimDrive') return 'SimDrive (Cockpit)';
-  if (modeKey === 'GTA6_Launch') return 'GTA 6 Launch Special';
+  if (modeKey === 'GTA 6' || modeKey === 'GTA6_Launch') return 'GTA 6';
   return `${modeConfig.label} (${modeConfig.players}P)`;
 }
 
