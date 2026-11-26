@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Hero from '@/components/home/Hero';
 import GtaSpotlightSection from '@/components/home/GtaSpotlightSection';
 import LoungeZonesSection from '@/components/home/LoungeZonesSection';
-import BookingFlowSection from '@/components/home/BookingFlowSection';
 import GamesPage from './GamesPage';
 import PricingMatrix from '@/pages/booking/PricingMatrix';
 import LocationFaqSection from '@/components/home/LocationFaqSection';
@@ -18,10 +17,10 @@ export default function HomePage() {
 
   return (
     <div className="bg-obsidian text-white">
-      {/* 00 // Main Grid Lounge Hero */}
+      {/* 1. Main Grid Lounge Hero */}
       <Hero />
 
-      {/* 01 // GTA VI Launch Event Spotlight */}
+      {/* 2. GTA VI Available Now Spotlight */}
       <AnimatedContent
         distance={32}
         direction="vertical"
@@ -33,7 +32,7 @@ export default function HomePage() {
         <GtaSpotlightSection />
       </AnimatedContent>
 
-      {/* 02 // Hardware & Zones Architecture */}
+      {/* 3. Our 3 Gaming Screens & Hardware */}
       <AnimatedContent
         distance={32}
         direction="vertical"
@@ -45,19 +44,7 @@ export default function HomePage() {
         <LoungeZonesSection />
       </AnimatedContent>
 
-      {/* 03 // Zero-Queue Reservation Protocol */}
-      <AnimatedContent
-        distance={32}
-        direction="vertical"
-        duration={0.85}
-        ease="power3.out"
-        blur={8}
-        threshold={0.1}
-      >
-        <BookingFlowSection />
-      </AnimatedContent>
-
-      {/* 04 // Playable Game Library */}
+      {/* 4. Installed Game Library */}
       <AnimatedContent
         distance={32}
         direction="vertical"
@@ -69,7 +56,7 @@ export default function HomePage() {
         <GamesPage embedded />
       </AnimatedContent>
 
-      {/* 05 // Transparent Session Tariff Matrix */}
+      {/* 5. Lounge Session & Extension Pricing (Live from Pricing Service) */}
       <AnimatedContent
         distance={32}
         direction="vertical"
@@ -81,7 +68,7 @@ export default function HomePage() {
         <PricingMatrix onSelectMode={handleSelectMode} />
       </AnimatedContent>
 
-      {/* 06 // Venue Coordinates & FAQ Intel */}
+      {/* 6. Location, Timings & FAQs */}
       <AnimatedContent
         distance={32}
         direction="vertical"

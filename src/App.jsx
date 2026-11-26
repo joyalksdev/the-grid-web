@@ -10,7 +10,8 @@ import GtaViPage from './pages/GtaViPage';
 import TicketPage from './pages/TicketPage';
 import ProfilePage from './pages/ProfilePage';
 import Footer from './components/layout/Footer';
-
+import TermsAndConditions from './pages/TermsAndConditions';
+import PricingPage from './pages/PricingPage';
 // React Bits Components
 import AnimatedContent from '@/components/AnimatedContent';
 import { SwipeToastProvider } from '@/components/SwipeToast';
@@ -68,7 +69,7 @@ export default function App() {
 
   return (
     <SwipeToastProvider>
-      <div className="min-h-screen bg-obsidian text-white selection:bg-neon selection:text-obsidian flex flex-col justify-between">
+      <div className="min-h-screen bg-obsidian text-white selection:bg-cyan-900/60 selection:text-green-200 flex flex-col justify-between">
         <ScrollToTop />
 
         {/* Fixed SaaS Navbar + Top GTA VI Countdown Banner */}
@@ -95,7 +96,9 @@ export default function App() {
               <Route path="/gta-vi" element={<GtaViPage />} />
               <Route path="/gta-6" element={<GtaViPage />} />
               <Route path="/games" element={<GamesPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/location" element={<LocationPage />} />
+              <Route path="/policies" element={<TermsAndConditions />} />
               <Route
                 path="/book"
                 element={

@@ -7,6 +7,11 @@ export const bookingService = {
     return response.data;
   },
 
+  getPublicScreensStatus: async () => {
+    const response = await API.get('/public/screens-status');
+    return response.data;
+  },
+
   getPublicAvailability: async (date) => {
     const response = await API.get('/public/availability', {
       params: { date },

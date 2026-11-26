@@ -1,62 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tv, Clock, Sofa, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Tv, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import GtaHero from '@/components/GtaVI/GtaHero';
 import { Badge } from '@/components/ui/badge';
 import AnimatedContent from '@/components/AnimatedContent';
 import SpotlightCard from '@/components/SpotlightCard';
 import gridData from '@/data/gridData.json';
+import { bookingService } from '@/services/bookingService';
 
-const gtaPricing = gridData.pricingMatrix.GTA6_Launch;
-
-const GTA_PACKAGES = [
-  {
-    id: 'gta-30',
-    name: '30-Minute Launch Session',
-    duration: 30,
-    price: gtaPricing.sessions['30'],
-    extension: gtaPricing.extensions['30'],
-    tag: 'Quick Session',
-    desc: 'Jump into Vice City and Leonida for a 30-minute session on your chosen PS5 screen.',
-    perks: [
-      'Available on Screen 1, Screen 2, or Screen 3',
-      'Extend by 30 mins for ₹130 (if screen is free)',
-      'Instant booking confirmation',
-    ],
-    spotlight: 'rgba(255, 46, 136, 0.14)',
-  },
-  {
-    id: 'gta-60',
-    name: '1-Hour Full Launch Session',
-    duration: 60,
-    price: gtaPricing.sessions['60'],
-    extension: gtaPricing.extensions['60'],
-    tag: 'Most Popular',
-    desc: 'Experience a full 60 minutes of story missions and Vice City exploration.',
-    perks: [
-      'Available on Screen 1 (55" TV), Screen 2, or Screen 3',
-      'Extend by 1 hour for ₹230 (if screen is free)',
-      'Instant booking confirmation',
-    ],
-    spotlight: 'rgba(0, 255, 102, 0.14)',
-  },
-];
+const defaultGtaPricing = gridData.pricingMatrix.GTA6_Launch;
+const GTA6_SCREENS = gridData.screens.filter(
+  (s) => s.code === 'Screen1' || s.code === 'Screen2'
+);
 
 export default function GtaViPage() {
   const navigate = useNavigate();
+  const [gtaPricing, setGtaPricing] = useState(defaultGtaPricing);
+
+  useEffect(() => {
+    let active = true;
+    bookingService
+      .getPublicConfig()
+      .then((data) => {
+        if (!active) return;
+        if (data?.pricing?.matrix?.GTA6_Launch) {
+          setGtaPricing({
+            ...defaultGtaPricing,
+            sessions: {
+              ...defaultGtaPricing.sessions,
+              ...(data.pricing.matrix.GTA6_Launch.sessions || {}),
+            },
+            extensions: {
+              ...defaultGtaPricing.extensions,
+              ...(data.pricing.matrix.GTA6_Launch.extensions || {}),
+            },
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const gtaPackages = [
+    {
+      id: 'gta-30',
+      name: '30-Minute Session',
+      duration: 30,
+      price: gtaPricing.sessions['30'],
+      extension: gtaPricing.extensions['30'],
+      tag: 'Quick Session',
+      desc: 'Jump into Vice City and Leonida for a 30-minute session on Screen 1 or Screen 2.',
+      perks: [
+        'Available on Screen 1 (55" 4K TV) & Screen 2 (43" 4K TV)',
+        `Extend by 30 mins for ₹${gtaPricing.extensions['30']} (if screen is free)`,
+        'Instant booking confirmation on WhatsApp',
+      ],
+      spotlight: 'rgba(255, 46, 136, 0.14)',
+    },
+    {
+      id: 'gta-60',
+      name: '1-Hour Full Session',
+      duration: 60,
+      price: gtaPricing.sessions['60'],
+      extension: gtaPricing.extensions['60'],
+      tag: 'Most Popular',
+      desc: 'Experience a full 60 minutes of story missions and Vice City exploration on PS5.',
+      perks: [
+        'Available on Screen 1 (55" 4K TV) & Screen 2 (43" 4K TV)',
+        `Extend by 1 hour for ₹${gtaPricing.extensions['60']} (if screen is free)`,
+        'Instant booking confirmation on WhatsApp',
+      ],
+      spotlight: 'rgba(0, 255, 102, 0.14)',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-obsidian text-white">
       {/* 1. GTA VI Parallax Hero */}
-      <GtaHero
-        onBookClick={() =>
-          navigate(
-            '/book?mode=GTA6_Launch&duration=60&game=Grand%20Theft%20Auto%20VI'
-          )
-        }
-      />
+      <GtaHero onBookClick={() => navigate('/book')} />
 
-      {/* 2. GTA 6 Launch Special Pricing & Screens */}
+      {/* 2. GTA 6 Session Rates & Screens */}
       <section className="mx-auto max-w-7xl border-t border-white/10 px-4 py-20 sm:px-6 lg:px-8">
         <AnimatedContent
           distance={32}
@@ -73,21 +98,21 @@ export default function GtaViPage() {
                 variant="outline"
                 className="mb-3 rounded-full border-vice/40 bg-vice/10 px-3 py-1 text-xs font-medium text-vice"
               >
-                First 7 Days Exclusive
+                Available Now on PS5
               </Badge>
               <h2 className="font-display text-3xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
-                GTA 6 Launch Special Rates
+                GTA 6 Session Rates
               </h2>
             </div>
 
             <p className="max-w-md text-sm text-white/60">
-              During the first 7 days of launch, book a 30-minute or 1-hour session online. (Note: 15-minute sessions are not offered for GTA 6.)
+              Choose a 30-minute or 1-hour session online on Screen 1 or Screen 2. (Note: 15-minute sessions are not offered for GTA 6.)
             </p>
           </div>
 
-          {/* 2-Column GTA 6 Launch Sessions */}
+          {/* 2-Column GTA 6 Sessions */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {GTA_PACKAGES.map((pkg) => (
+            {gtaPackages.map((pkg) => (
               <SpotlightCard
                 key={pkg.id}
                 spotlightColor={pkg.spotlight}
@@ -138,11 +163,7 @@ export default function GtaViPage() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      navigate(
-                        `/book?mode=GTA6_Launch&duration=${pkg.duration}&game=Grand%20Theft%20Auto%20VI`
-                      )
-                    }
+                    onClick={() => navigate('/book')}
                     className="group flex w-full cursor-pointer items-center justify-between rounded-xl bg-white px-5 py-3 text-xs font-semibold text-obsidian transition-colors hover:bg-white/90"
                   >
                     <span>Book {pkg.name}</span>
@@ -156,9 +177,9 @@ export default function GtaViPage() {
             ))}
           </div>
 
-          {/* 3. Choose Your Screen for GTA 6 */}
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {gridData.screens.map((scr) => (
+          {/* 3. Choose Your Screen for GTA 6 (Screen 1 & Screen 2) */}
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {GTA6_SCREENS.map((scr) => (
               <div
                 key={scr.code}
                 className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#0d1017] p-6"
@@ -180,11 +201,7 @@ export default function GtaViPage() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    navigate(
-                      `/book?screen=${scr.code}&mode=GTA6_Launch&duration=60&game=Grand%20Theft%20Auto%20VI`
-                    )
-                  }
+                  onClick={() => navigate('/book')}
                   className="mt-4 inline-flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-white hover:text-neon"
                 >
                   Book GTA 6 on {scr.name}

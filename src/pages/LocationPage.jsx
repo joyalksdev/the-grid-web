@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   Navigation,
   Ticket,
+  CheckCircle2,
 } from 'lucide-react';
 import SpotlightCard from '@/components/SpotlightCard';
 import gridData from '@/data/gridData.json';
@@ -20,29 +21,28 @@ import { isBookingEnabled } from '@/utils/bookingConfig';
 
 export const GOOGLE_MAPS_URL = 'https://maps.app.goo.gl/abn9mNczw6RCNAcN7';
 
-// Replace these dummy URLs with your actual shop photos (e.g. '/img/shop-1.jpg')
 const SHOP_PHOTOS = [
   {
     id: 'shop-main',
-    src: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1400&q=85',
+    src: 'https://res.cloudinary.com/ev5vzoa8/image/upload/v1795627357/WhatsApp_Image_2026-11-25_at_10.27.25_PM.jpg',
     title: 'Main Lounge & 55" 4K PS5 Setup',
     tag: 'Screen 1',
   },
   {
     id: 'shop-sim',
-    src: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=900&q=80',
+    src: 'https://res.cloudinary.com/ev5vzoa8/image/upload/v1795627352/WhatsApp_Image_2026-11-25_at_10.27.15_PM.jpg',
     title: 'Logitech G923 + TRONE RS1 Cockpit',
     tag: 'Screen 3 · SimDrive',
   },
   {
     id: 'shop-screen2',
-    src: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80',
+    src: 'https://res.cloudinary.com/ev5vzoa8/image/upload/v1795627353/WhatsApp_Image_2026-11-25_at_10.27.21_PM.jpg',
     title: '43" 4K UHD Couch Gaming Zone',
     tag: 'Screen 2',
   },
   {
     id: 'shop-lounge',
-    src: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80',
+    src: 'https://res.cloudinary.com/ev5vzoa8/image/upload/v1795627353/WhatsApp_Image_2026-11-25_at_10.27.21_PM.jpg',
     title: 'Town Square Shopping Centre, Thondiyil',
     tag: 'Lounge Interior',
   },
@@ -62,17 +62,14 @@ export default function LocationPage() {
         {/* ====================================================================
             SHOP & LOCATION HERO
            ==================================================================== */}
-        <div className="mb-14">
+        <div className="mb-12">
           {/* Top Header & Direct Map / Booking Actions */}
           <div className="flex flex-col justify-between gap-6 border-b border-white/10 pb-7 lg:flex-row lg:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/80">
-                <span className="h-1.5 w-1.5 rounded-full bg-neon" />
-                <span>
-                  {loungeInfo.address.area}, {loungeInfo.address.district} · Open{' '}
-                  {loungeInfo.timings.open} – {loungeInfo.timings.close}
-                </span>
-              </div>
+              <span className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs font-medium text-white/80">
+                {loungeInfo.address.area}, {loungeInfo.address.district} · Open{' '}
+                {loungeInfo.timings.open} – {loungeInfo.timings.close}
+              </span>
 
               <h1 className="font-display mt-3.5 text-3xl font-bold tracking-tight text-white sm:text-5xl">
                 {loungeInfo.name} {loungeInfo.subtitle}
@@ -214,9 +211,9 @@ export default function LocationPage() {
           </div>
         </div>
 
-        {/* 3-Column Info Grid */}
+        {/* 3-Column Info Grid (Without Green Dots) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Card 1: Address & Contact */}
+          {/* Card 1: Contact & Support */}
           <SpotlightCard
             spotlightColor="rgba(0, 255, 102, 0.1)"
             className="rounded-2xl border border-white/10 bg-[#0d1017] p-7 sm:p-8"
@@ -225,15 +222,15 @@ export default function LocationPage() {
               <div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <span className="text-xs font-semibold text-white/60">
-                    Lounge Address
+                    Contact &amp; Reservations
                   </span>
-                  <MapPin size={18} className="text-neon" />
+                  <Phone size={18} className="text-neon" />
                 </div>
                 <h2 className="font-display mt-5 text-2xl font-semibold text-white">
-                  {loungeInfo.name} {loungeInfo.subtitle}
+                  Direct Desk Support
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/75">
-                  {loungeInfo.address.fullAddress}
+                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/65">
+                  Need help finding the shop or extending your session? Call or message our counter directly.
                 </p>
 
                 <div className="mt-6 space-y-2.5 border-t border-white/10 pt-4 text-xs">
@@ -270,7 +267,7 @@ export default function LocationPage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs font-medium text-white/75 transition-colors hover:border-neon/40 hover:text-white"
               >
-                <span>📍 Ground Floor, Town Square, Thondiyil</span>
+                <span>Ground Floor, Town Square, Thondiyil</span>
                 <ArrowUpRight size={14} className="shrink-0 text-neon" />
               </a>
             </div>
@@ -292,7 +289,7 @@ export default function LocationPage() {
                 <h3 className="font-display mt-5 text-2xl font-semibold text-white">
                   Open All 7 Days
                 </h3>
-                <p className="mt-2 text-sm text-white/75">
+                <p className="mt-2 text-xs sm:text-sm text-white/65">
                   {loungeInfo.timings.days}
                 </p>
                 <div className="mt-6 space-y-2 rounded-xl border border-white/10 bg-obsidian p-4 text-xs">
@@ -313,7 +310,7 @@ export default function LocationPage() {
 
               <div className="rounded-xl border border-neon/20 bg-neon/[0.04] p-3.5 text-xs text-white/80">
                 <span className="font-semibold text-neon">Walk-in Friendly:</span>{' '}
-                Stop by anytime during operating hours or message us on WhatsApp for fast reservations.
+                Stop by anytime during operating hours or book your slot online in advance.
               </div>
             </div>
           </SpotlightCard>
@@ -327,17 +324,17 @@ export default function LocationPage() {
               <div>
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
                   <span className="text-xs font-semibold text-white/60">
-                    Premium Amenities
+                    Lounge Comfort &amp; Gear
                   </span>
                   <Sofa size={18} className="text-vice" />
                 </div>
                 <h3 className="font-display mt-5 text-2xl font-semibold text-white">
                   Pro Setup &amp; Comfort
                 </h3>
-                <ul className="mt-4 space-y-2 text-xs text-white/70">
+                <ul className="mt-4 space-y-2 text-xs text-white/75">
                   {loungeInfo.amenities.map((item) => (
                     <li key={item} className="flex items-center gap-2.5">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-neon" />
+                      <CheckCircle2 size={14} className="shrink-0 text-neon" />
                       <span>{item}</span>
                     </li>
                   ))}

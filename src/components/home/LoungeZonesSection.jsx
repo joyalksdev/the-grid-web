@@ -8,7 +8,7 @@ import gridData from '@/data/gridData.json';
 const SCREEN_COLORS = {
   Screen1: ['#00ff66', '#00f0ff', '#ffffff'],
   Screen2: ['#00f0ff', '#38bdf8', '#00ff66'],
-  Screen3: ['#ff2e88', '#ff8a3d', '#c084fc'],
+  Screen3: ['#ff2e88', '#ff8a3d', '#00f0ff'],
 };
 
 export default function LoungeZonesSection() {
@@ -36,7 +36,7 @@ export default function LoungeZonesSection() {
           </p>
         </div>
 
-        {/* 3-Column Screen Cards */}
+        {/* 3-Column Screen Cards with BorderGlow */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {gridData.screens.map((screen) => {
             const isSim = Boolean(screen.simRig?.available);
@@ -114,7 +114,7 @@ export default function LoungeZonesSection() {
                   <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-4">
                     <button
                       type="button"
-                      onClick={() => navigate(`/book?screen=${screen.code}&mode=Single`)}
+                      onClick={() => navigate(`/book?screen=${screen.code}`)}
                       className="group inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-xs font-semibold text-obsidian transition-colors hover:bg-white/90"
                     >
                       Book {screen.name}
@@ -127,10 +127,10 @@ export default function LoungeZonesSection() {
                     {isSim && (
                       <button
                         type="button"
-                        onClick={() => navigate('/book?screen=Screen3&mode=SimDrive')}
+                        onClick={() => navigate('/pricing')}
                         className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-cyber/30 bg-cyber/10 px-3.5 py-2.5 text-xs font-semibold text-cyber transition-colors hover:bg-cyber/20"
                       >
-                        Book SimDrive
+                        SimDrive Rates
                       </button>
                     )}
                   </div>

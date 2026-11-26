@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Ticket, Gamepad2, Gauge, Tv, Sofa, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import CurvedLoop from '@/components/CurvedLoop';
 import GradientText from '@/components/GradientText';
 import AnimatedContent from '@/components/AnimatedContent';
@@ -65,7 +64,7 @@ export default function GridHero() {
       {/* CurvedLoop in background */}
       <div className="pointer-events-auto absolute inset-x-0 top-28 z-[1] overflow-hidden opacity-20 transition-opacity duration-500 hover:opacity-40">
         <CurvedLoop
-          marqueeText="THE GRID GAMING LOUNGE ✦ PERAVOOR KANNUR ✦ PS5 4K SCREENS ✦ LOGITECH G923 SIMDRIVE COCKPIT ✦ OPEN 10AM TO 10PM ✦ "
+          marqueeText="THE GRID GAMING LOUNGE ✦  ✦ "
           shape="arc"
           speed={1.8}
           curveAmount={260}
@@ -92,26 +91,19 @@ export default function GridHero() {
           stagger={0.08}
           threshold={0.1}
         >
-          {/* Status row */}
+          {/* Status row (Clean, no pinging green dot) */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
-            <Badge
-              variant="outline"
-              className="gap-2 rounded-full border-white/15 bg-white/[0.03] px-3.5 py-4 text-xs font-medium text-white/80"
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon/70" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-neon" />
-              </span>
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80">
               {gridData.loungeInfo.address.area}, {gridData.loungeInfo.address.district} ·{' '}
               {gridData.loungeInfo.timings.open} – {gridData.loungeInfo.timings.close}
-            </Badge>
+            </span>
 
             <button
               type="button"
               onClick={() => navigate('/gta-vi')}
-              className="group inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 px-3.5 py-1.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="group inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
             >
-              GTA 6 Launch Special
+              GTA 6 Available Now
               <ArrowRight
                 size={12}
                 className="transition-transform group-hover:translate-x-0.5"
@@ -119,17 +111,18 @@ export default function GridHero() {
             </button>
           </div>
 
-          {/* Headline */}
+          {/* Headline with line break before THE GRID */}
           <div className="mx-auto max-w-4xl text-center">
-            <h1 className="font-display text-4xl font-semibold leading-[1.06] tracking-tight sm:text-6xl lg:text-7xl">
-              Play together at{' '}
-              <span className="font-logo mt-1 block sm:mt-0 sm:inline">
+            <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
+              Play together at
+              <br />
+              <span className="font-logo mt-2 block">
                 <GradientText
                   colors={['#ffffff', '#00ff66', '#ffffff']}
                   animationSpeed={7}
                   variant="linear"
                 >
-                  The Grid
+                  THE GRID
                 </GradientText>
               </span>
             </h1>
@@ -166,7 +159,7 @@ export default function GridHero() {
                     e.currentTarget.style.display = 'none';
                   }}
                 />
-                GTA 6 Launch Special
+                Play GTA 6 Now
               </Button>
 
               <Button
@@ -192,20 +185,20 @@ export default function GridHero() {
               <motion.div key={label} variants={cardItem} className="h-full">
                 <BorderGlow
                   edgeSensitivity={30}
-                  glowColor="40 80 80"
-                  backgroundColor="#120F17"
-                  borderRadius={28}
-                  glowRadius={40}
-                  glowIntensity={1}
+                  glowColor="145 80 70"
+                  backgroundColor="#0d1017"
+                  borderRadius={24}
+                  glowRadius={36}
+                  glowIntensity={0.95}
                   coneSpread={25}
                   animated={false}
-                  colors={['#c084fc', '#f472b6', '#38bdf8']}
+                  colors={['#00ff66', '#00f0ff', '#ffffff']}
                 >
                   <div className="flex h-full flex-col p-6 text-left">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/80">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-neon">
                       <Icon size={20} />
                     </div>
-                    <p className="font-display mt-6 text-3xl font-semibold tracking-tight">
+                    <p className="font-display mt-6 text-3xl font-semibold tracking-tight text-white">
                       {value}
                     </p>
                     <p className="mt-1 text-sm font-medium text-white/90">{label}</p>

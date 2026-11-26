@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import GradientText from '../GradientText';
 import gridData from '@/data/gridData.json';
 
 const Footer = () => {
@@ -12,7 +11,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 py-10 sm:grid-cols-3">
           {/* Col 1: Brand & Address */}
           <div>
-            <div className="flex items-center gap-2.5">
+            <Link to="/" className="inline-flex items-center gap-2.5">
               <img
                 src="/grid-logo.png"
                 alt="The Grid"
@@ -21,16 +20,10 @@ const Footer = () => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <span className="font-logo text-sm font-extrabold tracking-[0.14em]">
-                <GradientText
-                  colors={['#ffffff', '#00ff66', '#ffffff']}
-                  animationSpeed={10}
-                  variant="linear"
-                >
-                  THE GRID
-                </GradientText>
+              <span className="font-logo text-sm font-extrabold tracking-[0.14em] text-white">
+                THE GRID
               </span>
-            </div>
+            </Link>
             <p className="mt-2.5 max-w-xs text-xs leading-relaxed text-white/60">
               {loungeInfo.address.fullAddress}
             </p>
@@ -42,23 +35,29 @@ const Footer = () => {
           {/* Col 2: Quick Links */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
-              Quick Links
+              Navigation
             </p>
             <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-white/75">
               <Link to="/" className="hover:text-white">
                 Home
               </Link>
-              <Link to="/gta-vi" className="hover:text-vice">
-                GTA 6 Special
+              <Link to="/gta-vi" className="hover:text-white">
+                GTA 6 on PS5
               </Link>
               <Link to="/games" className="hover:text-white">
                 Screens &amp; Games
               </Link>
-              <Link to="/book" className="hover:text-neon">
-                Book Your Screen
+              <Link to="/pricing" className="hover:text-white">
+                Pricing &amp; Rates
+              </Link>
+              <Link to="/book" className="hover:text-white">
+                Book a Slot
               </Link>
               <Link to="/location" className="hover:text-white">
                 Shop &amp; Location
+              </Link>
+              <Link to="/policies" className="hover:text-white">
+                Terms &amp; Policies
               </Link>
             </div>
           </div>
@@ -67,7 +66,7 @@ const Footer = () => {
           <div className="flex flex-col justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
-                Contact Us
+                Contact
               </p>
               <div className="mt-2.5 space-y-1 text-xs text-white/75">
                 <p>

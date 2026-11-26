@@ -188,14 +188,14 @@ export default function ProfilePage({
               Player Profile &amp; Passes
             </h1>
             <p className="mt-2 text-xs leading-relaxed text-white/60 sm:text-sm">
-              Sign in with your WhatsApp number to view your active booking passes, session history, and player profile.
+              Sign in with your email address to view your active booking passes, session history, and player profile.
             </p>
             <Button
-              onClick={onRequireLogin}
+              onClick={() => onRequireLogin?.()}
               className="mt-6 h-11 w-full cursor-pointer rounded-xl bg-white text-xs font-semibold text-obsidian hover:bg-white/90"
             >
               <LogIn size={15} className="mr-1.5" />
-              Sign In with WhatsApp OTP
+              Sign In with Email OTP
             </Button>
           </div>
         </div>

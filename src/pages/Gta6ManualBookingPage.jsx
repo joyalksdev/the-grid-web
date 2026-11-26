@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Flame,
-  Clock,
-  Sparkles,
   Copy,
   Check,
   Tv,
@@ -14,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSwipeToast } from '@/components/SwipeToast';
+import TermsModal from '@/components/TermsModal';
 import gridData from '@/data/gridData.json';
 import { bookingService } from '@/services/bookingService';
 import { socket } from '@/services/socket';
@@ -121,6 +120,11 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [copiedOrderId, setCopiedOrderId] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(15 * 60);
+
+  // Terms & Conditions Acceptance Modal State
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [termsPreviewOnly, setTermsPreviewOnly] = useState(false);
+  const [pendingBookingUser, setPendingBookingUser] = useState(null);
 
   // Fetch dynamic pricing from backend
   useEffect(() => {
@@ -398,15 +402,20 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
       return;
     }
 
-    // Protect button: if unauthenticated, open AuthModal and pass auto-resume callback
+    // 1. If unauthenticated, open AuthModal first, then open TermsModal with checkbox
     if (!user) {
       onRequireLogin?.((verifiedUser) => {
-        executeSlotLock(verifiedUser);
+        setPendingBookingUser(verifiedUser);
+        setTermsPreviewOnly(false);
+        setTermsModalOpen(true);
       });
       return;
     }
 
-    executeSlotLock(user);
+    // 2. If already logged in, open TermsModal with checkbox before locking slot
+    setPendingBookingUser(user);
+    setTermsPreviewOnly(false);
+    setTermsModalOpen(true);
   };
 
   const currentScreenObj =
@@ -419,26 +428,39 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
         <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold text-neon uppercase tracking-wider">
-              <Flame size={13} /> GTA VI Launch Reservation
+              <Flame size={13} /> GTA VI PS5 Session
             </span>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-0.5">
               Book Your GTA 6 Slot
             </h1>
           </div>
           {user && (
-            <div className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/70">
-              <span className="h-2 w-2 rounded-full bg-neon" />
+            <div className="inline-flex items-center gap-2 self-start sm:self-auto rounded-full border border-white/10 bg-[#0d1017] px-3 py-1 text-xs text-white/75">
               <span>{user.email || user.phone}</span>
             </div>
           )}
         </div>
 
         {/* PROMINENT TERMS NOTICE */}
-        <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3.5 text-xs flex items-center gap-3">
-          <ShieldAlert size={18} className="text-amber-400 shrink-0" />
-          <p className="font-semibold text-amber-200">
-            Controller sharing is not allowed for GTA 6. Please read our terms and conditions.
-          </p>
+        <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3.5 text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <ShieldAlert size={18} className="text-amber-400 shrink-0" />
+            <p className="font-semibold text-amber-200">
+              Controller sharing is not allowed for GTA 6. Please read our{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingBookingUser(user);
+                  setTermsPreviewOnly(false);
+                  setTermsModalOpen(true);
+                }}
+                className="cursor-pointer underline decoration-amber-400/60 underline-offset-2 hover:text-white font-bold"
+              >
+                terms and conditions
+              </button>
+              .
+            </p>
+          </div>
         </div>
 
         {/* CONFIRMATION / REDIRECT VIEW */}
@@ -625,8 +647,8 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
 
                 {/* Add Extensions */}
                 <div className="border-t border-white/10 pt-3.5">
-                  <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-white/50 flex items-center gap-1.5">
-                    <Sparkles size={12} className="text-neon" /> Add Extensions
+                  <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-white/50">
+                    Add Extensions
                   </p>
                   <div className="grid grid-cols-3 gap-2.5">
                     {[
@@ -843,6 +865,16 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
           </form>
         )}
       </div>
+
+      {/* TERMS & CONDITIONS ACCEPTANCE MODAL (Opens after login & before slot lock) */}
+      <TermsModal
+        open={termsModalOpen}
+        onOpenChange={setTermsModalOpen}
+        requireAcceptance={!termsPreviewOnly}
+        onAccept={() => {
+          executeSlotLock(pendingBookingUser || user);
+        }}
+      />
     </div>
   );
 }

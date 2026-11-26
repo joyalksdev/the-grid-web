@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   Library,
   MapPin,
   LogIn,
-  Ticket,
   ArrowRight,
   Menu,
-  Clock,
   ChevronRight,
-  Flame,
   User,
   LogOut,
   QrCode,
   Phone,
-  AlertTriangle,
-  X,
+  Gamepad2,
+  IndianRupee,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -36,155 +32,68 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import gridData from '@/data/gridData.json';
-import { isBookingEnabled } from '@/utils/bookingConfig';
-
-const TARGET_DATE = new Date('2026-11-19T00:00:00+05:30').getTime();
 
 export default function Navbar({ user, onLoginClick, onLogout }) {
   const navigate = useNavigate();
-  const [isLaunched, setIsLaunched] = useState(() => Date.now() >= TARGET_DATE);
-  const [timeLeft, setTimeLeft] = useState({
-    days: '00',
-    hours: '00',
-    mins: '00',
-    secs: '00',
-  });
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const updateTimer = () => {
-      const now = Date.now();
-      const diff = TARGET_DATE - now;
-
-      if (diff <= 0) {
-        setIsLaunched(true);
-        setTimeLeft({ days: '00', hours: '00', mins: '00', secs: '00' });
-        return;
-      }
-
-      setIsLaunched(false);
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / 1000 / 60) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-
-      setTimeLeft({
-        days: String(d).padStart(2, '0'),
-        hours: String(h).padStart(2, '0'),
-        mins: String(m).padStart(2, '0'),
-        secs: String(s).padStart(2, '0'),
-      });
-    };
-
-    updateTimer();
-    const timer = setInterval(updateTimer, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const goToBooking = () => {
     setMobileOpen(false);
     navigate('/book');
   };
 
-  const navPillClass = ({ isActive }) =>
-    `flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+  const navLinkClass = ({ isActive }) =>
+    `flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors ${
       isActive
-        ? 'bg-white/15 text-white shadow-sm'
-        : 'text-white/70 hover:bg-white/[0.07] hover:text-white'
+        ? 'bg-white text-obsidian'
+        : 'text-white/70 hover:bg-white/[0.06] hover:text-white'
     }`;
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex flex-col select-none">
-      {/* 1. TOP BANNER: GTA 6 LAUNCH COUNTDOWN (NOV 19) OR AVAILABLE NOW */}
+      {/* 1. TOP BANNER: GTA 6 AVAILABLE NOW */}
       <div
         onClick={() => navigate('/book')}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && navigate('/book')}
-        className="group relative flex h-9 sm:h-10 w-full cursor-pointer items-center justify-center border-b border-white/[0.08] bg-gradient-to-r from-obsidian via-[#191129] to-obsidian px-2.5 sm:px-4 transition-colors hover:via-[#221638]"
+        className="group flex h-9 w-full cursor-pointer items-center justify-center border-b border-white/10 bg-[#0d1017] px-3 sm:px-6 transition-colors hover:bg-[#121620]"
       >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between sm:justify-center gap-2 sm:gap-4 text-xs">
-          {isLaunched ? (
-            <>
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <Badge
-                  variant="outline"
-                  className="hidden md:inline-flex border-neon/40 bg-neon/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-neon uppercase"
-                >
-                  <Flame size={11} className="mr-1" /> Live Now
-                </Badge>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between sm:justify-center gap-3 text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="rounded border border-neon/30 bg-neon/10 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-neon">
+              GTA VI
+            </span>
+            <span className="truncate text-[11px] sm:text-xs font-semibold text-white">
+              Available Now on PS5 at The Grid
+            </span>
+            <span className="hidden md:inline text-white/35">·</span>
+            <span className="hidden md:inline text-xs text-white/60">
+              30 Mins: ₹150 · 1 Hour: ₹250
+            </span>
+          </div>
 
-                <div className="flex items-center gap-2 text-white">
-                  <span className="h-2 w-2 rounded-full bg-neon animate-pulse shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-bold tracking-tight">
-                    GTA 6 Available
-                  </span>
-                  <span className="hidden sm:inline text-white/40">·</span>
-                  <span className="hidden sm:inline text-xs text-white/75 font-medium">
-                    Play now on PS5 at The Grid
-                  </span>
-                </div>
-              </div>
-
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-neon px-3 py-0.5 text-[10px] sm:text-[11px] font-extrabold text-obsidian transition-all group-hover:translate-x-0.5">
-                <span>Book Now</span>
-                <ArrowRight size={11} />
-              </span>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-                <Badge
-                  variant="outline"
-                  className="hidden md:inline-flex border-vice/40 bg-vice/15 px-2 py-0.5 text-[10px] font-bold tracking-wider text-vice uppercase"
-                >
-                  <Flame size={11} className="mr-1" /> Nov 19 Launch
-                </Badge>
-
-                <div className="flex items-center gap-1.5 sm:gap-2 text-white/90">
-                  <Clock size={13} className="text-neon shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-semibold tracking-tight whitespace-nowrap">
-                    <span className="sm:hidden">GTA 6:</span>
-                    <span className="hidden sm:inline">GTA 6 Launch Countdown:</span>
-                  </span>
-
-                  <div className="flex items-center gap-0.5 sm:gap-1 font-mono text-[11px] sm:text-xs font-bold text-neon tabular-nums">
-                    <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                      {timeLeft.days}d
-                    </span>
-                    <span className="text-white/40">:</span>
-                    <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                      {timeLeft.hours}h
-                    </span>
-                    <span className="text-white/40">:</span>
-                    <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                      {timeLeft.mins}m
-                    </span>
-                    <span className="text-white/40">:</span>
-                    <span className="rounded bg-white/[0.06] px-1 sm:px-1.5 py-0.5 border border-white/10">
-                      {timeLeft.secs}s
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-neon/15 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-neon border border-neon/30 transition-all group-hover:translate-x-0.5 group-hover:bg-neon group-hover:text-obsidian">
-                <span>Book Now</span>
-                <ArrowRight size={11} />
-              </span>
-            </>
-          )}
+          <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-neon group-hover:underline">
+            <span>Book Now</span>
+            <ArrowRight
+              size={12}
+              className="transition-transform group-hover:translate-x-0.5"
+            />
+          </span>
         </div>
       </div>
 
       {/* 2. MAIN NAVBAR */}
-      <div className="border-b border-white/[0.08] bg-obsidian/85 backdrop-blur-xl">
+      <div className="border-b border-white/10 bg-obsidian/90 backdrop-blur-xl">
         <nav className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3.5 sm:px-6 lg:px-8">
           {/* LEFT: Brand Logo */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group justify-start shrink-0">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 sm:gap-3 group justify-start shrink-0"
+          >
             <img
               src="/grid-logo.png"
-              className="w-auto h-7 sm:h-8 object-contain transition-transform duration-200 mb-1 group-hover:scale-105"
+              className="w-auto h-7 mb-1 sm:h-8 object-contain transition-transform duration-200 group-hover:scale-105"
               alt="The Grid Logo"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -194,39 +103,32 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
               <span className="font-logo text-sm sm:text-base font-extrabold tracking-[0.14em] text-white leading-none">
                 THE GRID
               </span>
-              <span className="mt-0.5 sm:mt-1 text-[9px] sm:text-[10px] font-semibold tracking-[0.2em] text-white/45 uppercase">
+              <span className="mt-1 text-[9px] sm:text-[10px] font-semibold tracking-[0.18em] text-white/45 uppercase">
                 Gaming Lounge
               </span>
             </div>
           </Link>
 
-          {/* CENTER: Navigation Links */}
-          <div className="hidden md:flex items-center gap-1 rounded-full border border-white/[0.08] bg-white/[0.03] p-1 backdrop-blur-md">
-            <NavLink to="/games" className={navPillClass}>
-              <Library size={14} className="text-cyber" />
+          {/* CENTER: Clean SaaS Navigation Links */}
+          <div className="hidden md:flex items-center gap-1 rounded-xl border border-white/10 bg-[#0d1017] p-1">
+            <NavLink to="/games" className={navLinkClass}>
+              <Library size={14} />
               <span>Screens &amp; Games</span>
             </NavLink>
 
-            <NavLink to="/location" className={navPillClass}>
-              <MapPin size={14} className="text-neon" />
+            <NavLink to="/pricing" className={navLinkClass}>
+              <IndianRupee size={14} />
+              <span>Pricing</span>
+            </NavLink>
+
+            <NavLink to="/location" className={navLinkClass}>
+              <MapPin size={14} />
               <span>Shop &amp; Location</span>
             </NavLink>
 
-            <NavLink
-              to="/gta-vi"
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-vice/20 via-sunset/15 to-vice/20 border border-vice/40 px-4 py-1.5 text-xs font-bold text-white transition-all hover:border-vice/70"
-            >
-              <img
-                src="/img/gta-6-logo.png"
-                alt="GTA VI"
-                className="h-3.5 w-auto object-contain"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-              <span className="bg-gradient-to-r from-white via-pink-200 to-vice bg-clip-text text-transparent">
-                GTA 6 Special
-              </span>
+            <NavLink to="/gta-vi" className={navLinkClass}>
+              <Gamepad2 size={14} />
+              <span>GTA 6</span>
             </NavLink>
           </div>
 
@@ -235,23 +137,23 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/[0.08] cursor-pointer">
-                    <Avatar className="h-6 w-6 border border-neon/40">
+                  <button className="flex items-center gap-2 rounded-xl border border-white/10 bg-[#0d1017] px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/[0.06] cursor-pointer">
+                    <Avatar className="h-6 w-6 border border-white/15">
                       <AvatarImage src="" alt={user.name} />
-                      <AvatarFallback className="bg-neon/15 text-[10px] font-bold text-neon">
-                        {user.name?.slice(0, 2).toUpperCase() || 'GG'}
+                      <AvatarFallback className="bg-white/10 text-[10px] font-bold text-white">
+                        {user.name?.slice(0, 2).toUpperCase() || 'GP'}
                       </AvatarFallback>
                     </Avatar>
                     <span>
-                      {user.phone
-                        ? user.phone.slice(-4)
-                        : user.email?.split('@')[0] || 'Player'}
+                      {user.name ||
+                        user.email?.split('@')[0] ||
+                        (user.phone ? user.phone.slice(-4) : 'Player')}
                     </span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-52 border-white/10 bg-obsidian text-white"
+                  className="w-52 rounded-xl border-white/10 bg-[#0d1017] text-white"
                 >
                   <DropdownMenuLabel className="text-xs text-white/60">
                     <span className="block font-semibold text-white">
@@ -266,15 +168,15 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                     onClick={() => navigate('/profile')}
                     className="cursor-pointer text-xs focus:bg-white/10 focus:text-white"
                   >
-                    <User size={14} className="mr-2 text-neon" />
+                    <User size={14} className="mr-2 text-white/70" />
                     Profile &amp; My Passes
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => navigate('/book')}
                     className="cursor-pointer text-xs focus:bg-white/10 focus:text-white"
                   >
-                    <QrCode size={14} className="mr-2 text-cyber" />
-                    Book GTA 6
+                    <QrCode size={14} className="mr-2 text-white/70" />
+                    Book a Slot
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem
@@ -291,7 +193,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                 variant="ghost"
                 size="sm"
                 onClick={onLoginClick}
-                className="h-9 rounded-xl border border-white/10 bg-white/[0.02] px-4 text-xs font-semibold text-white/85 hover:bg-white/[0.08] hover:text-white cursor-pointer"
+                className="h-9 rounded-xl border border-white/10 bg-[#0d1017] px-3.5 text-xs font-semibold text-white/85 hover:bg-white/[0.06] hover:text-white cursor-pointer"
               >
                 <LogIn size={14} className="mr-1.5 text-white/60" />
                 Sign In
@@ -301,10 +203,10 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
             <Button
               size="sm"
               onClick={goToBooking}
-              className="h-9 rounded-xl bg-neon px-4 text-xs font-extrabold text-obsidian shadow-[0_0_20px_-6px_rgba(0,255,102,0.5)] transition-all hover:bg-neon/90 cursor-pointer"
+              className="h-9 rounded-xl bg-neon px-4 text-xs font-extrabold text-obsidian transition-colors hover:bg-neon/90 cursor-pointer"
             >
-              <Flame size={14} className="mr-1.5" />
-              Book GTA 6
+              <span>Book Now</span>
+              <ArrowRight size={13} className="ml-1.5" />
             </Button>
           </div>
 
@@ -315,8 +217,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
               onClick={goToBooking}
               className="h-8 rounded-lg bg-neon px-3 text-[11px] font-extrabold text-obsidian active:scale-95 cursor-pointer"
             >
-              <Flame size={13} className="mr-1" />
-              Book GTA 6
+              Book Now
             </Button>
 
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -325,7 +226,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                   variant="ghost"
                   size="icon"
                   aria-label="Open navigation menu"
-                  className="h-9 w-9 rounded-xl border border-white/10 bg-white/[0.04] text-white hover:bg-white/10 active:scale-95"
+                  className="h-9 w-9 rounded-xl border border-white/10 bg-[#0d1017] text-white hover:bg-white/10 active:scale-95"
                 >
                   <Menu size={18} />
                 </Button>
@@ -333,16 +234,16 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
 
               <SheetContent
                 side="right"
-                className="flex h-full w-[88vw] max-w-[340px] flex-col justify-between border-l border-white/10 bg-obsidian/95 backdrop-blur-2xl text-white p-5"
+                className="flex h-full w-[86vw] max-w-[320px] flex-col justify-between border-l border-white/10 bg-obsidian text-white p-5"
               >
                 <div className="flex flex-col">
-                  <SheetHeader className="text-left border-b border-white/[0.08] pb-4">
+                  <SheetHeader className="text-left border-b border-white/10 pb-4">
                     <SheetTitle className="flex items-center justify-between text-white">
                       <div className="flex items-center gap-2.5">
                         <img
                           src="/grid-logo.png"
                           alt="The Grid"
-                          className="h-7 w-auto object-contain"
+                          className="h-6 w-auto object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
@@ -351,121 +252,76 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                           <p className="font-logo text-sm font-extrabold tracking-[0.14em] text-white leading-none">
                             THE GRID
                           </p>
-                          <p className="mt-1 text-[9px] font-semibold text-white/45 uppercase tracking-[0.2em]">
+                          <p className="mt-1 text-[9px] font-semibold text-white/45 uppercase tracking-[0.18em]">
                             Peravoor, Kannur
                           </p>
                         </div>
                       </div>
-
-                      <Badge className="border-neon/30 bg-neon/10 text-[10px] font-semibold text-neon mr-6">
-                        10 AM – 10 PM
-                      </Badge>
                     </SheetTitle>
                   </SheetHeader>
 
-                  {/* GTA 6 Launch Card inside Mobile Drawer */}
-                  <div
-                    onClick={() => {
-                      setMobileOpen(false);
-                      navigate('/gta-vi');
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    className="group relative mt-5 cursor-pointer overflow-hidden rounded-2xl border border-vice/40 bg-gradient-to-br from-vice/20 via-[#1a1025] to-obsidian p-4 transition-all active:scale-[0.99]"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <Badge className="bg-vice/20 border-vice/40 text-[10px] font-bold uppercase tracking-wider text-pink-200">
-                          First 7 Days Exclusive
-                        </Badge>
-                        <p className="mt-2 font-display text-base font-extrabold text-white">
-                          GTA 6 Launch Special
-                        </p>
-                        <p className="mt-0.5 text-xs text-white/65">
-                          30 Mins: ₹150 · 1 Hour: ₹250
-                        </p>
-                      </div>
-                      <img
-                        src="/img/gta-6-logo.png"
-                        alt="GTA VI"
-                        className="h-10 w-auto object-contain shrink-0"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2.5 text-[11px] font-mono text-neon">
-                      {isLaunched ? (
-                        <span className="font-sans font-bold text-neon">
-                          GTA 6 Available
-                        </span>
-                      ) : (
-                        <span>
-                          {timeLeft.days}d : {timeLeft.hours}h : {timeLeft.mins}m : {timeLeft.secs}s
-                        </span>
-                      )}
-                      <span className="inline-flex items-center gap-1 font-sans font-bold text-white group-hover:translate-x-0.5 transition-transform">
-                        {isLaunched ? 'Book Now' : 'View Special'} <ChevronRight size={13} />
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Mobile Nav Link Cards */}
-                  <div className="mt-4 flex flex-col gap-2">
-                    <Link
-                      to="/games"
-                      onClick={() => setMobileOpen(false)}
-                      className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3 transition-all hover:border-cyber/40 hover:bg-white/[0.05]"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyber/10 border border-cyber/25 text-cyber">
-                          <Library size={18} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-white">
-                            Screens &amp; Games
-                          </p>
-                          <p className="text-[11px] text-white/50">
-                            Screen 1, Screen 2 &amp; Screen 3 games
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronRight
-                        size={16}
-                        className="text-white/30 group-hover:text-white"
-                      />
-                    </Link>
-
-                    <Link
-                      to="/location"
-                      onClick={() => setMobileOpen(false)}
-                      className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3 transition-all hover:border-neon/40 hover:bg-white/[0.05]"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neon/10 border border-neon/25 text-neon">
-                          <MapPin size={18} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-white">
-                            Shop &amp; Location
-                          </p>
-                          <p className="text-[11px] text-white/50">
-                            Town Square, Thondiyil, Peravoor
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronRight
-                        size={16}
-                        className="text-white/30 group-hover:text-white"
-                      />
-                    </Link>
+                  {/* Clean Mobile Nav List */}
+                  <div className="mt-4 flex flex-col gap-1.5">
+                    {[
+                      {
+                        to: '/games',
+                        label: 'Screens & Games',
+                        sub: 'Screen 1, Screen 2 & Screen 3 catalog',
+                        icon: Library,
+                      },
+                      {
+                        to: '/pricing',
+                        label: 'Pricing & Rates',
+                        sub: 'Session & extension rate card',
+                        icon: IndianRupee,
+                      },
+                      {
+                        to: '/gta-vi',
+                        label: 'GTA 6 on PS5',
+                        sub: 'Available now · Book 30m or 60m',
+                        icon: Gamepad2,
+                      },
+                      {
+                        to: '/location',
+                        label: 'Shop & Location',
+                        sub: 'Town Square, Thondiyil, Peravoor',
+                        icon: MapPin,
+                      },
+                    ].map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          onClick={() => setMobileOpen(false)}
+                          className="group flex items-center justify-between rounded-xl border border-white/10 bg-[#0d1017] p-3 transition-colors hover:border-white/25"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-obsidian text-white/80">
+                              <Icon size={16} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-white">
+                                {item.label}
+                              </p>
+                              <p className="truncate text-[11px] text-white/50">
+                                {item.sub}
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight
+                            size={15}
+                            className="shrink-0 text-white/30 group-hover:text-white"
+                          />
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
 
                 {/* Pinned CTA Footer */}
-                <div className="mt-auto border-t border-white/[0.08] pt-4">
-                  <div className="mb-3 flex items-center justify-between text-[11px] text-white/60 px-1">
+                <div className="mt-auto border-t border-white/10 pt-4">
+                  <div className="mb-3 flex items-center justify-between text-[11px] text-white/55 px-1">
                     <a
                       href={`tel:${gridData.loungeInfo.contact.primaryPhone.replace(/\s+/g, '')}`}
                       className="flex items-center gap-1.5 hover:text-white"
@@ -476,7 +332,7 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                     <span>10:00 AM – 10:00 PM</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -487,18 +343,17 @@ export default function Navbar({ user, onLoginClick, onLogout }) {
                           onLoginClick?.();
                         }
                       }}
-                      className="h-11 rounded-xl border-white/15 bg-white/[0.03] text-xs font-bold text-white hover:bg-white/10"
+                      className="h-10 rounded-xl border-white/15 bg-[#0d1017] text-xs font-semibold text-white hover:bg-white/10"
                     >
-                      <User size={15} className="mr-1.5 text-neon" />
+                      <User size={14} className="mr-1.5 text-white/70" />
                       {user ? 'My Profile' : 'Sign In'}
                     </Button>
 
                     <Button
                       onClick={goToBooking}
-                      className="h-11 rounded-xl bg-neon text-xs font-extrabold text-obsidian hover:bg-neon/90"
+                      className="h-10 rounded-xl bg-neon text-xs font-extrabold text-obsidian hover:bg-neon/90"
                     >
-                      <Flame size={15} className="mr-1.5" />
-                      Book GTA 6
+                      Book Now
                     </Button>
                   </div>
                 </div>
