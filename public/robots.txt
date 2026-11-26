@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /ticket/
+
+Sitemap: https://thegridgaming.fun/sitemap.xml

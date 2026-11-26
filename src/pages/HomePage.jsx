@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Hero from '@/components/home/Hero';
 import GtaSpotlightSection from '@/components/home/GtaSpotlightSection';
 import LoungeZonesSection from '@/components/home/LoungeZonesSection';
@@ -17,6 +18,15 @@ export default function HomePage() {
 
   return (
     <div className="bg-obsidian text-white">
+      <Helmet>
+        <title>The Grid - Gaming Lounge in Kannur | PS5, GTA 6 &amp; SimDrive in Peravoor</title>
+        <meta
+          name="description"
+          content="Book your PS5 and SimDrive session at The Grid Gaming Lounge in Thondiyil, Peravoor, Kannur. Fully AC lounge, 55&quot; &amp; 43&quot; 4K TVs, Logitech G923 Racing Simulator, and exclusive GTA 6 Launch Specials. Open 10 AM to 10 PM."
+        />
+        <link rel="canonical" href="https://thegridgaming.fun/" />
+      </Helmet>
+
       {/* 1. Main Grid Lounge Hero */}
       <Hero />
 

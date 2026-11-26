@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   Tv,
   Gamepad2,
@@ -175,6 +176,17 @@ export default function GamesPage({ embedded = false }) {
         embedded ? 'py-20' : 'pt-28 sm:pt-32 pb-24 min-h-screen'
       }`}
     >
+      {!embedded && (
+        <Helmet>
+          <title>Our Games - The Grid</title>
+          <meta
+            name="description"
+            content="Play FC 26, GTA V, GTA VI, Forza Horizon 5, Marvel's Spider-Man 2, God of War: Ragnarök, Ghost of Tsushima, WWE 2K24, Mortal Kombat, Gran Turismo 7, and more on PS5 and SimDrive in Peravoor, Kannur."
+          />
+          <link rel="canonical" href="https://thegridgaming.fun/games" />
+        </Helmet>
+      )}
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ====================================================================
             LIVE LOUNGE SCREEN STATUS (TOP OF GAMES & SCREENS PAGE)

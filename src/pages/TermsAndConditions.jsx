@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   ShieldCheck,
   Sparkles,
@@ -126,6 +127,15 @@ export default function TermsAndConditions() {
 
   return (
     <section className="min-h-screen bg-obsidian pt-28 sm:pt-32 pb-24 text-white">
+      <Helmet>
+        <title>Terms &amp; Lounge Rules - The Grid</title>
+        <meta
+          name="description"
+          content="Read the lounge rules, no-controller-sharing policy, fixed screen booking guidelines, and 18+ GTA 6 session rules at The Grid Gaming Lounge in Peravoor, Kannur."
+        />
+        <link rel="canonical" href="https://thegridgaming.fun/policies" />
+      </Helmet>
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ====================================================================
             TOP HEADER (Minimal SaaS Pattern matching LocationPage & GamesPage)

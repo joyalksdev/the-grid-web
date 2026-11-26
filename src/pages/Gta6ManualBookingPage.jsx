@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Flame,
   Copy,
@@ -424,6 +425,15 @@ export default function Gta6ManualBookingPage({ user, onRequireLogin }) {
 
   return (
     <div className="relative min-h-screen bg-obsidian text-white pt-28 pb-20 px-4 sm:px-6">
+      <Helmet>
+        <title>Book Your Screen - The Grid</title>
+        <meta
+          name="description"
+          content="Select Screen 1 (55&quot; 4K TV), Screen 2 (43&quot; 4K TV), or our SimDrive Setup on Screen 3. Book Single, Dual, Triple, Big player, or GTA 6 Launch Special sessions instantly at The Grid Gaming Lounge, Peravoor."
+        />
+        <link rel="canonical" href="https://thegridgaming.fun/book" />
+      </Helmet>
+
       <div className="mx-auto max-w-4xl">
         {/* MINIMAL HEADER */}
         <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

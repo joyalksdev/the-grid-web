@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Tv, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
 import GtaHero from '@/components/GtaVI/GtaHero';
 import { Badge } from '@/components/ui/badge';
@@ -81,6 +82,15 @@ export default function GtaViPage() {
 
   return (
     <div className="min-h-screen bg-obsidian text-white">
+      <Helmet>
+        <title>GTA 6 Launch Special - The Grid Gaming</title>
+        <meta
+          name="description"
+          content="Play GTA 6 early at The Grid Gaming Lounge in Peravoor, Kannur! Book our exclusive First 7 Days Launch Special for 30 minutes (₹150) or 60 minutes (₹250) on PS5 (Screen 1 &amp; Screen 2)."
+        />
+        <link rel="canonical" href="https://thegridgaming.fun/gta-vi" />
+      </Helmet>
+
       {/* 1. GTA VI Parallax Hero */}
       <GtaHero onBookClick={() => navigate('/book')} />
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   MapPin,
   Clock,
@@ -58,6 +59,15 @@ export default function LocationPage() {
 
   return (
     <section className="min-h-screen bg-obsidian pt-24 sm:pt-32 pb-24 text-white">
+      <Helmet>
+        <title>Location &amp; Timings - The Grid</title>
+        <meta
+          name="description"
+          content="Find The Grid Gaming Lounge at Ground Floor, Town Square, Thondiyil, Peravoor, Kannur, Kerala. Fully AC lounge with 2 sofas, 4 bean bags, and 3 PS5 screens. Open every day from 10:00 AM to 10:00 PM."
+        />
+        <link rel="canonical" href="https://thegridgaming.fun/location" />
+      </Helmet>
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ====================================================================
             SHOP & LOCATION HERO
